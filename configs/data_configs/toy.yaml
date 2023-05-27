@@ -1,0 +1,21 @@
+train:
+  - '../data/GC_dataset/GC_Dataset_toy1.npy'
+#  - '../data/GC_dataset/GC_Dataset_toy2.npy'
+#  - '../data/GC_dataset/GC_Dataset_toy3.npy'
+#  - '../data/GC_dataset/GC_Dataset_ped1-12685_time1880-1940_interp9_xrange5-25_yrange15-35.npy'
+#  - '../data/synthetic_data/GC_Dataset_ped1-12685_time760-820_interp9_xrange5-25_yrange15-35_simulation.npy'
+#  - '../data/synthetic_data/GC_Dataset_ped1-12685_time2104-2164_interp9_xrange5-25_yrange15-35_simulation.npy'
+#  - '../data/UCY_dataset/UCY_Dataset_time0-54_timeunit0.08.npy'
+
+valid:
+  - '../data/GC_dataset/GC_Dataset_toy4.npy'
+  - '../data/GC_dataset/GC_Dataset_toy5.npy'
+
+#test:
+#  - '../data/GC_dataset/GC_Dataset_ped1-12685_time1976-2036_interp9_xrange5-25_yrange15-35.npy'
+#  - '../data/GC_dataset/GC_Dataset_ped1-12685_time2040-2100_interp9_xrange5-25_yrange15-35.npy'
+#  - '../data/GC_dataset/GC_Dataset_ped1-12685_time2104-2164_interp9_xrange5-25_yrange15-35.npy'
+#  - '../data/GC_dataset/GC_Dataset_ped1-12685_time2164-2224_interp9_xrange5-25_yrange15-35.npy'
+#  - '../data/GC_dataset/GC_Dataset_ped1-12685_time2224-2284_interp9_xrange5-25_yrange15-35.npy'
+#  - '../data/GC_dataset/GC_Dataset_ped1-12685_time2284-2344_interp9_xrange5-25_yrange15-35.npy'
+#  - '../data/GC_dataset/GC_Dataset_ped1-12685_time2344-2404_interp9_xrange5-25_yrange15-35.npy'

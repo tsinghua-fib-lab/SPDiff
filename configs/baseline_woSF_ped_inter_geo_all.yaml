@@ -1,0 +1,101 @@
+############ MID Config #############
+# optimizer
+lr: 0.001
+# nei_attn_mask: True
+nei_padding_mask: True
+batch_size: 32
+
+diffusion_steps: 100
+# - 500
+# - 2000
+variance_mode: 'linear'
+# 'linear', 'cosine'
+val_mode: multistep
+# Training Prarmeters:
+diffnet: SpatialTransformer_ped_inter_geometric_all #TransformerConcatLinear
+
+yt_encoder_layers: 3
+spatial_emsize: 64
+spatial_encoder_head: 4
+# spatial_encoder_hidden: 128
+spatial_encoder_layers: 2
+dropout: 0.3 #0.1 0.3
+esti_goal: acce # acce, pos
+
+history_dim: 6 # if esti_goal==acce 6 else 2d
+history_emsize: 64
+history_lstm: 128
+history_lstm_out: 64
+
+ped_encode_dim1: 64
+ped_encode_hid1:
+- 64
+- 64
+ped_encode_dim2: 64
+ped_encode2_layers: 4
+
+egnn_layers: 3
+egnn_hid_dim: 64
+diff_emb_hid: 64
+diff_emb_out: 64
+pooling: mean
+# context_dim = dest_emsize+history_lstm_out
+obs_seq_len: 8
+pred_seq_len: 20
+epochs: -1
+
+# dataset
+data_path: configs/data_configs/data_pretrain3.yaml
+rebuild_dataset: False
+data_dict_path: dataset_built/pretrain_ucy_0403_trainonsyn_t3v1.pkl
+save_model: True
+finetune: True
+finetune_epochs: 120
+finetune_data_path: configs/data_configs/data_finetune3_3.yaml
+rebuild_finetune_dataset: False
+finetune_dict_path: dataset_built/pretrain_ucy_0403_trainonreal_mt_fn10_t2v1.pkl
+# dataset_built/pretrain_ucy_0119_trainonreal_mt_fn10.pkl
+model_sd_path: False
+# experiments/baseline_woSF_ped_inter_debug/2023-03-21-23-03-27run/chpt/Epoch 70.pkl
+# experiments/baseline_woSF_ped_inter_debug/2023-03-21-23-03-14run/chpt/Epoch 20.pkl
+# experiments/baseline_woSF_ped_inter_debug/2023-02-20-16-16-51run/chpt/Epoch 100.pkl
+# experiments/baseline_woSF_ped_inter_debug/2023-02-19-16-09-24run/chpt/Epoch 100.pkl
+# experiments/baseline_woSF_ped_inter_debug/2023-02-18-21-17-25run/chpt/Epoch 65.pkl
+# experiments/baseline_woSF_ped_inter_debug/2023-01-31-15-04-57run/chpt/Epoch 70.pkl
+# experiments/baseline_woSF_ped_inter_debug/2023-01-22-16-23-02run/chpt/Epoch 90.pkl
+finetune_trainmode: multistep # singlestep/multistep
+time_decay: 0.9
+use_col_focus_loss: False
+collision_threshold: 0.5
+
+dataset_type: timeindex
+finetune_flag: 1
+valid_steps: 10
+data_dir: processed_data_sf
+topk_ped: 6
+sight_angle_ped: 90
+dist_threshold_ped: 4
+topk_obs: 10
+sight_angle_obs: 90
+dist_threshold_obs: 4
+skip_frames: 25
+num_history_feature: 8 
+num_history_velocity: 1
+train_mode: multi
+
+  # the path with the directory with XXX.pkl
+
+eval_batch_size: 256
+k_eval: 25
+
+seed: 456 #456
+eval_every: 10
+
+# Testing
+eval_at: 80
+eval_mode: False
+
+# Data Parameters:
+device: cuda
+eval_device: None
+note: geometric_all+egnnacce+conv4

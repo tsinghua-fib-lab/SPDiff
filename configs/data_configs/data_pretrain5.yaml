@@ -1,0 +1,8 @@
+train:
+  - '../data/GC_dataset/GC_Dataset_ped1-12685_time2104-2164_interp9_xrange5-25_yrange15-35.npy'
+  - '../data/GC_dataset/GC_Dataset_ped1-12685_time2164-2224_interp9_xrange5-25_yrange15-35.npy'
+  - '../data/GC_dataset/GC_Dataset_ped1-12685_time2224-2284_interp9_xrange5-25_yrange15-35.npy'
+  - '../data/GC_dataset/GC_Dataset_ped1-12685_time2284-2344_interp9_xrange5-25_yrange15-35.npy'
+
+valid:
+  - '../data/GC_dataset/GC_Dataset_ped1-12685_time2344-2404_interp9_xrange5-25_yrange15-35.npy'

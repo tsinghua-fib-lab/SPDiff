@@ -1,0 +1,69 @@
+############ MID Config #############
+# optimizer
+lr: 0.001
+
+batch_size: 32
+
+diffusion_steps: 500
+# - 500
+# - 2000
+variance_mode: 'linear'
+# 'linear', 'cosine'
+val_mode: multistep
+# Training Prarmeters:
+diffnet: SpatialTransformer2 #TransformerConcatLinear
+neighbor_thred: 10000
+spatial_emsize: 128
+spatial_encoder_head: 4
+# spatial_encoder_hidden: 128
+spatial_encoder_layers: 2
+dropout: 0.3 #0.1 0.3
+esti_goal: acce # acce, pos
+history_dim: 6 # if esti_goal==acce 6 else 2
+history_emsize: 64
+history_lstm: 256
+history_lstm_out: 32
+dest_emsize: 32
+dest_hidden: # when using spatialtransformer2
+- 128
+- 256
+
+context_dim: 64 # = dest_emsize + history_lstm_out
+pred_seq_len: 20
+epochs: 300
+
+# dataset
+data_path: configs/data_configs/data_pretrain2.yaml
+
+dataset_type: timeindex
+finetune_flag: 1
+valid_steps: 20
+data_dir: processed_data_sf
+topk_ped: 6
+sight_angle_ped: 90
+dist_threshold_ped: 4
+topk_obs: 10
+sight_angle_obs: 90
+dist_threshold_obs: 4
+skip_frames: 25
+num_history_feature: 8 
+train_mode: multi
+
+
+rebuild_dataset: False
+data_dict_path: dataset_built/pretrain_ucy_01071913.pkl
+
+  # the path with the directory with XXX.pkl
+
+eval_batch_size: 256
+k_eval: 25
+seed: 456
+eval_every: 50
+
+# Testing
+eval_at: 70
+eval_mode: False
+
+# Data Parameters:
+device: cuda
+eval_device: None
