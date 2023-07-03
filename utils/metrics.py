@@ -211,19 +211,19 @@ class MaximumMeanDiscrepancy(object):
         super(MaximumMeanDiscrepancy, self).__init__()
 
     def guassian_kernel(self, source, target, kernel_mul=2.0, kernel_num=5, fix_sigma=None):
-        """计算Gram核矩阵
-        source: sample_size_1 * feature_size 的数据
-        target: sample_size_2 * feature_size 的数据
-        kernel_mul: 这个概念不太清楚，感觉也是为了计算每个核的bandwith
-        kernel_num: 表示的是多核的数量
-        fix_sigma: 表示是否使用固定的标准差
-            return: (sample_size_1 + sample_size_2) * (sample_size_1 + sample_size_2)的
-                            矩阵，表达形式:
+        ""**Gra**
+        source: sample_size_1 * feature_size**
+        target: sample_size_2 * feature_size**
+        kernel_mul:****bandwith
+        kernel_num:**
+        fix_sigma:**
+            return: (sample_size_1 + sample_size_2) * (sample_size_1 + sample_size_2**
+                           ****:
                             [   K_ss K_st
                                 K_ts K_tt ]
         """
         n_samples = int(source.size()[0]) + int(target.size()[0])
-        total = torch.cat([source, target], dim=0)  # 合并在一起
+        total = torch.cat([source, target], dim=0)  #**
 
         total0 = total.unsqueeze(0).expand(int(total.size(0)),
                                            int(total.size(0)),
@@ -231,9 +231,9 @@ class MaximumMeanDiscrepancy(object):
         total1 = total.unsqueeze(1).expand(int(total.size(0)),
                                            int(total.size(0)),
                                            int(total.size(1)))
-        L2_distance = ((total0 - total1) ** 2).sum(2)  # 计算高斯核中的|x-y|
+        L2_distance = ((total0 - total1) ** 2).sum(2)  #**|x-y|
 
-        # 计算多核中每个核的bandwidth
+        #**bandwidth
         if fix_sigma:
             bandwidth = fix_sigma
         else:
@@ -242,11 +242,11 @@ class MaximumMeanDiscrepancy(object):
         bandwidth_list = [bandwidth * (kernel_mul ** i)
                           for i in range(kernel_num)]
 
-        # 高斯核的公式，exp(-|x-y|/bandwith)
+        #**，exp(-|x-y|/bandwith)
         kernel_val = [torch.exp(-L2_distance / bandwidth_temp) for
                       bandwidth_temp in bandwidth_list]
 
-        return sum(kernel_val)  # 将多个核合并在一起
+        return sum(kernel_val)  #**
 
     def __call__(self, source, target, kernel_mul=2.0, kernel_num=5, fix_sigma=None):
         # source.dim=2 
@@ -260,14 +260,14 @@ class MaximumMeanDiscrepancy(object):
         XY = kernels[:n, n:]
         YX = kernels[n:, :n]
 
-        # K_ss矩阵，Source<->Source
+        # K_s**，Source<->Source
         XX = torch.div(XX, n * n).sum(dim=1).view(1, -1)
-        # K_st矩阵，Source<->Target
+        # K_s**，Source<->Target
         XY = torch.div(XY, -n * m).sum(dim=1).view(1, -1)
 
-        # K_ts矩阵,Target<->Source
+        # K_t**,Target<->Source
         YX = torch.div(YX, -m * n).sum(dim=1).view(1, -1)
-        # K_tt矩阵,Target<->Target
+        # K_t**,Target<->Target
         YY = torch.div(YY, m * m).sum(dim=1).view(1, -1)
 
         loss = (XX + XY).sum() + (YX + YY).sum()
@@ -329,29 +329,29 @@ def fde_at_label_end(p_pred, labels, reduction='mean'):
     
 def dtw(x, y, dist_func=None, return_path=False):
     """
-    计算两个序列之间的DTW距离和路径
+   **DT**
 
     Args:
-        x: shape (m, d)，第一个序列
-        y: shape (n, d)，第二个序列
-        dist_func: 距离函数，默认为欧几里得距离
-        return_path: 是否返回DTW路径
+        x: shape (m, d)**
+        y: shape (n, d)**
+        dist_func:****
+        return_path:**DT**
 
     Returns:
-        DTW距离和路径（可选）
+        DT****）
     """
     if dist_func is None:
-        # 默认使用欧几里得距离
+        #**
         dist_func = lambda a, b: torch.norm(a - b)
 
-    # 计算距离矩阵
+    #**
     D = torch.zeros((len(x)+1, len(y)+1)) + float('inf')
     D[0, 0] = 0
     for i in range(1, len(x)+1):
         for j in range(1, len(y)+1):
             D[i, j] = dist_func(x[i-1], y[j-1])
 
-    # 动态规划计算DTW距离
+    #**DT**
     for i in range(1, len(x)+1):
         for j in range(1, len(y)+1):
             D[i, j] += torch.min(torch.stack([D[i-1, j], D[i, j-1], D[i-1, j-1]]))
@@ -359,7 +359,7 @@ def dtw(x, y, dist_func=None, return_path=False):
     dtw_dist = D[-1, -1]
 
     if return_path:
-        # 逆向追踪DTW路径
+        #**DT**
         dtw_path = [(len(x)-1, len(y)-1)]
         i, j = len(x), len(y)
         while i > 1 or j > 1:
@@ -386,10 +386,10 @@ def lcss(X, Y):
     m = len(X)
     n = len(Y)
 
-    # 初始化二维数组
+    #**
     l = [[None]*(n+1) for i in range(m+1)]
 
-    # 填充l[i][j]，即两个序列前i个和前j个的LCSS长度
+    #**l[i][j]******LCS**
     for i in range(m+1):
         for j in range(n+1):
             if i == 0 or j == 0:
@@ -399,25 +399,25 @@ def lcss(X, Y):
             else:
                 l[i][j] = max(l[i-1][j], l[i][j-1])
 
-    # l[m][n]即为最长公共子序列的长度
+    # l[m][n**
     return l[m][n]
 
 
 
 def dtw_tensor(tensor_x, tensor_y, mask_x, mask_y, disc_func=None, return_path=False, reduction='mean', norm=True):
     """
-    计算两个3维张量序列之间的DTW距离
+   ****DT**
 
     Args:
-        x: shape (m, N, d)，第一个序列
-        y: shape (m, N, d)，第二个序列 N:全图人数
-        mask_x: shape (m, N)，tensor_x对应的mask
-        mask_y: shape (m, N)，tensor_y对应的mask
-        dist_func: 距离函数，默认为欧几里得距离
-        return_path: 是否返回DTW路径
+        x: shape (m, N, d)**
+        y: shape (m, N, d)** N**
+        mask_x: shape (m, N)，tensor_**mask
+        mask_y: shape (m, N)，tensor_**mask
+        dist_func:****
+        return_path:**DT**
 
     Returns:
-        DTW距离和路径（可选）
+        DT****）
     """
     assert tensor_x.shape==tensor_y.shape
     assert tensor_x.shape[:2]==mask_x.shape==mask_y.shape
@@ -499,14 +499,14 @@ def get_nearby_distance_mmd(data_pred_pos, data_pred_velo, label_pos, label_velo
 def get_dist_mmd(pred_pos, pred_velo, label_pos, label_velo, dist_threshold, near_k, MMD, func_class):
     heading_direction = func_class.get_heading_direction(pred_velo)
     near_ped_dist, near_ped_idx = func_class.get_nearby_obj_in_sight(
-            pred_pos, pred_pos, heading_direction, near_k, angle_threshold=180)#找最近的top k=6
+            pred_pos, pred_pos, heading_direction, near_k, angle_threshold=180)**top k=6
     near_ped_dist = near_ped_dist[(near_ped_dist < dist_threshold) &
                                 (near_ped_dist > 0)]
     near_ped_dist = near_ped_dist.flatten().unsqueeze(-1)
     
     heading_direction_gt = func_class.get_heading_direction(label_velo)
     near_ped_dist_gt, near_ped_idx_gt = func_class.get_nearby_obj_in_sight(
-            label_pos, label_pos, heading_direction_gt, near_k, 180)#找最近的top k=6
+            label_pos, label_pos, heading_direction_gt, near_k, 180)**top k=6
     near_ped_dist_gt = near_ped_dist_gt[(near_ped_dist_gt < dist_threshold) &
                                 (near_ped_dist_gt > 0)]
     near_ped_dist_gt = near_ped_dist_gt.flatten().unsqueeze(-1)

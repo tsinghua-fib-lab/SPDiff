@@ -24,7 +24,7 @@ class RawData(object):
         obstacles: (M * 2)
         mask_a: (t, N), If someone is not in the frame, mask_a is zero too.
         mask_v: (t, N)
-        mask_p: (t, N): 标记了一个人在画面中的时间，在画面中则mask_p为1
+        mask_p: (t, N):****mask_**1
         num_steps: total number of time steps
         num_pedestrains: total number of pedestrains
         time_unit
@@ -88,7 +88,7 @@ class RawData(object):
         Dataset format description: see
         https://tsingroc-wiki.atlassian.net/wiki/spaces/TSINGROC/pages/2261120#%E6%95%B0%E6%8D%AE%E9%9B%86%E5%AD%98%E5%82%A8%E6%A0%BC%E5%BC%8F%E8%AF%B4%E6%98%8E
 
-        Note: 数据需要是连续的，trajectory里不能有断点
+        Note:**，trajector**
         """
         print(f"Loading from '{data_path}'...")
         out_of_bound = torch.tensor(float('nan'))
@@ -98,15 +98,15 @@ class RawData(object):
         meta_data, trajectories, destinations, obstacles = data
         obstacles = torch.tensor(obstacles, dtype=torch.float)
 
-        # todo: 目前为了方便，如果没有obstacles就随便给了一个，之后应该做出处理。
+        # todo:****obstacle****。
         if obstacles.shape[-1] == 0:
             obstacles = torch.tensor([[1e4, 1e4], [1e4+1, 1e4+1]], dtype=torch.float)
 
         self.meta_data = meta_data
         self.num_steps = max([u[-1][-1] for u in trajectories]) + 1
         self.num_pedestrians = len(trajectories)
-        self.num_destinations = max([len(u) for u in destinations])  # destination d的ts就是轨迹的最后一个ts。
-        position = torch.zeros((self.num_steps, self.num_pedestrians, 2))   # ts*num ped的矩阵，每个元素2维
+        self.num_destinations = max([len(u) for u in destinations])  # destination **t**ts。
+        position = torch.zeros((self.num_steps, self.num_pedestrians, 2))   # ts*num pe******
         velocity = torch.zeros((self.num_steps, self.num_pedestrians, 2))
         acceleration = torch.zeros((self.num_steps, self.num_pedestrians, 2))
         mask_p = torch.zeros((self.num_steps, self.num_pedestrians))
@@ -118,7 +118,7 @@ class RawData(object):
                 mask_p[t, i] = 1
                 mask_v[t, i] = 1
                 mask_a[t, i] = 1
-            mask_v[t, i] = 0 # mynote: 根据两步轨迹可以计算前一步的速度；根据两步速度可以计算前一步的加速度。也就是轨迹、速度、加速度有效编号依次减1
+            mask_v[t, i] = 0 # mynote:**********1
             mask_a[t, i] = 0
             if t >= 1:
                 mask_a[t - 1, i] = 0
@@ -128,7 +128,7 @@ class RawData(object):
 
         destination = torch.zeros((self.num_steps, self.num_pedestrians, 2))
         waypoints = torch.zeros((self.num_destinations, self.num_pedestrians, 2)) + out_of_bound # mynote: not all pedestrains have D(num_destinations) destinations
-        dest_idx = torch.zeros((self.num_steps, self.num_pedestrians), dtype=torch.long) # MN: 这个index标明了当前ts对应的des是第几个
+        dest_idx = torch.zeros((self.num_steps, self.num_pedestrians), dtype=torch.long) # MN:**inde**t**de**
         dest_num = torch.tensor([len(relays) for relays in destinations])
 
         for i, relays in enumerate(destinations):
@@ -147,11 +147,11 @@ class RawData(object):
         # dest_idx[mask_p == 0] = out_of_bound  # in this way we can directly use dest_idx to slice dest
         position[mask_p == 0] = out_of_bound
         velocity = torch.cat(
-            (position[1:, :, :], position[-1:, :, :]), 0) - position    # MN：第2个到最后减去第一个到最后（相邻timestep相减）
+            (position[1:, :, :], position[-1:, :, :]), 0) - position    # MN******timeste**）
         velocity /= meta_data['time_unit']
         velocity[mask_v == 0] = 0
         acceleration = torch.cat(
-            (velocity[1:, :, :], velocity[-1:, :, :]), 0) - velocity    # MN:故技重施
+            (velocity[1:, :, :], velocity[-1:, :, :]), 0) - velocity    # MN**
         acceleration /= meta_data['time_unit']
         acceleration[mask_a == 0] = 0
 
@@ -163,7 +163,7 @@ class RawData(object):
         self.position_desc = [position.masked_fill(mask_p.unsqueeze(-1),0).mean(),
                               position.masked_fill(mask_p.unsqueeze(-1),0).std()
                               ]
-        self.velocity_desc = [velocity.masked_fill(mask_v.unsqueeze(-1),0).mean(), #TODO:这里应该用position的mask？或者直接用mask_v,mask_a
+        self.velocity_desc = [velocity.masked_fill(mask_v.unsqueeze(-1),0).mean(), #TODO**positio**mask**mask_v,mask_a
                               velocity.masked_fill(mask_v.unsqueeze(-1),0).std()
                               ]
         self.acceleration_desc = [acceleration.masked_fill(mask_a.unsqueeze(-1),0).mean(),
@@ -361,14 +361,14 @@ class Pedestrians(object):
     @staticmethod
     def get_heading_direction(velocity):
         """
-        todo: 这个function需要完善，现在做的操作其实是对v=0的时候做了补全，v自身就是heading direction
+        todo:**functio****v=**，**heading direction
         Function: infer people's heading direction (without normalization);
         Using linear smoothing
         Args:
             velocity: (*c, t, N, 2)
         Return:
             heading_direction: (*c, t, N, 2)
-            (没有归一化)
+            **)
         """
         heading_direction = velocity.clone()
         if heading_direction.dim() == 3:
@@ -398,7 +398,7 @@ class Pedestrians(object):
                             heading_direction[j, t, i, :] = tmp_direction
                         else:
                             tmp_direction = heading_direction[j, t, i, :]
-        # 归一化
+        #**
         tmp_direction = torch.norm(heading_direction, p=2, dim=-1, keepdim=True)
         tmp_direction_ = tmp_direction.clone()
         tmp_direction_[tmp_direction_ == 0] += 0.1
@@ -509,8 +509,8 @@ class Pedestrians(object):
         Return:
             dest_features: *c, t, N, 2
         Notice:
-            返回值中，相对position远，或者自己已经不在frame里了，那么relative
-            features的值就会是0，做了zero padding。不会有inf出现。
+           ****positio****fram****relative
+            feature**0**zero padding**in**。
             c is channel size
         """
 
@@ -521,7 +521,7 @@ class Pedestrians(object):
         heading_direction = self.get_heading_direction(velocity)
 
         near_ped_dist, near_ped_idx = self.get_nearby_obj_in_sight(
-            position, position, heading_direction, topk_ped, sight_angle_ped)#找最近的top k=6
+            position, position, heading_direction, topk_ped, sight_angle_ped)**top k=6
         ped = torch.cat((position, velocity, acceleration), dim=-1)
         ped_features = self.get_relative_quantity(ped, ped)  # *c t N N dim
         ped_features, neigh_ped_mask = self.get_filtered_features(
@@ -536,7 +536,7 @@ class Pedestrians(object):
             obstacles = obstacles.unsqueeze(-3).repeat(
                 *([1]*(dim-2) + [num_steps] + [1, 1]))  # *c, t, N, 2
             near_obstacle_dist, near_obstacle_idx = self.get_nearby_obj_in_sight(
-                position, obstacles, heading_direction, topk_obs, sight_angle_obs) #找最近的top k=10
+                position, obstacles, heading_direction, topk_obs, sight_angle_obs) **top k=10
             obs = torch.cat((obstacles, torch.zeros(obstacles.shape, device=obstacles.device),
                              torch.zeros(obstacles.shape, device=obstacles.device)), dim=-1)
             obs_features = self.get_relative_quantity(ped, obs)  # t N M dim
@@ -549,14 +549,14 @@ class Pedestrians(object):
     @staticmethod
     def calculate_collision_label(ped_features):
         """
-        计算1s之内，如果保持当前的相对速度，那么是否会撞
+       **1******
         Args:
             ped_features: ...,k,6: (p,v,a)
 
         Returns:
             collisions: ...,k
         """
-        # 计算之后1s中每0.1s的相对位置，如果小于0.5那就会撞
+        #**1**0.1****0.**
         with torch.no_grad():
             time = torch.arange(10, device=ped_features.device) * 0.1
             time = time.resize(*([1] * (ped_features.dim()-1)), 10, 1)
@@ -572,9 +572,9 @@ class Pedestrians(object):
     @staticmethod
     def collision_detection(position, threshold, real_position=None):
         """
-        注意：输入的position必须是包含nan指代出frame的，否则无法计算平均每个人在一个frame里面的时长
+       ****positio**na**fram****fram**
         Args:
-            position: t,n,2 / c,t,n,2 注意时间这个维度必须对，才能相应的对朋友进行处理
+            position: t,n,2 / c,t,n,2****
 
 
         Returns:
@@ -603,10 +603,10 @@ class Pedestrians(object):
         # valid_steps[valid_steps.isnan()] = 0
         # valid_steps = torch.sum(valid_steps, dim=-2, keepdim=True)  # c,1,n
 
-        # 对朋友进行处理，去掉每一步都在碰撞的人：如果两个人有超过2s的时间都黏在一起，那么就认为这两个人是朋友。
-        # todo: 如果两个人相撞的时间是两个人共同出现时间的30%或以上，那么两个人就是朋友
+        #******2****。
+        # todo:**30****
         if real_position is not None:
-            # 仅供测试使用，支持输入为3维
+            #******
             assert real_position.dim() == 3, 'Value Error: real_position only supports 3 dimensional inputs (t,n,2)'
             relative_pos = Pedestrians.get_relative_quantity(real_position, real_position)  # c,n,n,2
             rel_distance = torch.norm(relative_pos, p=2, dim=-1)  # c,n,n
@@ -625,7 +625,7 @@ class Pedestrians(object):
                 friends[friends > 25] = 0
                 friends = friends.unsqueeze(0)
             elif collisions.dim() == 4:
-                # 训练： 删除原始数据前3个step就黏在一起的人，比如朋友，这种人不算避让
+                #**：****ste******
                 friends = collisions[:, :4]
                 friends = torch.sum(friends, dim=1)
                 friends[friends > 0] = 1
@@ -709,7 +709,7 @@ class TimeIndexedPedData(Dataset, Pedestrians):
 
     def move_index_matrix(self, idx_matrix, direction='forward', n_steps=1, dim=0):
         """
-        比如向后移动一位 [[0,1,1,1],[1,1,0,0]] -> [[0,0,1,1], [0,1,0,0]]
+       ** [[0,1,1,1],[1,1,0,0]] -> [[0,0,1,1], [0,1,0,0]]
 
         Args:
             idx_matrix: 0-1 index matrix
@@ -723,10 +723,10 @@ class TimeIndexedPedData(Dataset, Pedestrians):
         mask = idx_matrix.clone()
         moving_shape = list(mask.shape)
         moving_shape[dim] = n_steps
-        if direction == 'backward': # 选取0~ts-n_steps的范围，整体后移
+        if direction == 'backward': #**0~ts-n_step****
             mask = mask.index_select(dim, torch.arange(mask.shape[dim] - n_steps, device=idx_matrix.device))
             mask = torch.cat((torch.zeros(moving_shape, device=idx_matrix.device), mask), dim=dim)
-        elif direction == 'forward': # 选取n_steps~ts的范围，整体前移
+        elif direction == 'forward': #**n_steps~t****
             mask = mask.index_select(dim, torch.arange(n_steps, mask.shape[dim], device=idx_matrix.device))
             mask = torch.cat((mask, torch.zeros(moving_shape, device=idx_matrix.device)), dim=dim)
         mask *= idx_matrix
@@ -735,15 +735,15 @@ class TimeIndexedPedData(Dataset, Pedestrians):
     @staticmethod
     def turn_detection(data: RawData):
         """
-        判断一个人是否存在转弯行s为，方法：
-            1）连接此人起始点和终止点，看当前任进入的时候他的速度和直连的夹角是否小于一定阈值，15度（目标改变，转弯）
-            2）看起止点的距离是否远小于这个人真正走过的距离（回头）
-            3）看此人的平均速度，如果非常低也不用看（滞留）
+       ******：
+            1****，1******）
+            2****）
+            3******）
         Args:
             data:
 
         Returns:
-            non_abnormal: N，如果一个人行为异常则为0，否则为1
+            non_abnormal: N**0**1
 
         """
         position = data.position.clone()
@@ -751,7 +751,7 @@ class TimeIndexedPedData(Dataset, Pedestrians):
         T, N, _ = position.shape
         position[position.isnan()] = 1e4
 
-        # 找到每个人的起止点和初始速度
+        #**
         starts = torch.zeros((N, 2), device=position.device) + 1e4
         v_starts = torch.zeros((N, 2), device=position.device) + 1e4
         ends = torch.zeros((N, 2), device=position.device) + 1e4
@@ -762,16 +762,16 @@ class TimeIndexedPedData(Dataset, Pedestrians):
         dist = torch.norm(ends - starts, p=2, dim=-1) + 1e-6
         norm_v = torch.norm(v_starts, p=2, dim=-1) + 1e-6
 
-        # 判断转弯:
+        #**:
         cos_theta = torch.sum((ends - starts) * v_starts, dim=-1) / dist / norm_v
         cos_theta[cos_theta < np.cos(3.1415 * 20 / 180)] = 0
         cos_theta[cos_theta > 0] = 1
 
         non_abnormal = cos_theta
 
-        # todo: 判断回头
+        # todo:**
 
-        # 判断滞留
+        #**
         mean_velocity = torch.norm(velocity, p=2, dim=-1)  # t,n
         mean_velocity = torch.sum(mean_velocity, dim=0) / torch.sum(data.mask_v, dim=0)
 
@@ -792,10 +792,10 @@ class TimeIndexedPedData(Dataset, Pedestrians):
                 historical velocity: vx0, vy0, vx1, vy1, ..., vxn, vyn
             labels: t * N * 6 Position, speed, acceleration at the t+1 time step
             mask_a: t * N
-            mask_p_pred: t * N 对于预测来说，最后一个time step无用，同时由于history features的影响，最初的几步也没用
+            mask_p_pred: t * N****time ste****history feature****
 
         Notes:
-            空25step才开始计算
+           **25ste**
         """
 
         # raw_data.to(args.device)
@@ -821,7 +821,7 @@ class TimeIndexedPedData(Dataset, Pedestrians):
         self.near_obstacle_idx = near_obstacle_idx
         self.neigh_obs_mask = neigh_obs_mask
 
-        # 加入对行人是否有转弯、滞留等行为的判断
+        #****
         self.abnormal_mask = self.turn_detection(raw_data)
 
         self.ped_features = ped_features
@@ -856,7 +856,7 @@ class TimeIndexedPedData(Dataset, Pedestrians):
         hist_velocity = hist_velocity.reshape(num_frames, num_peds, -1)  # t, N, k*2 
 
         # calculate desired_speed
-        skip_frames = args.skip_frames  # settings: 开始空25个frames，然后再预测，这25个frames的速度均值作为desired-speed的预测值
+        skip_frames = args.skip_frames  # settings:**2**frames****2**frame**desired-spee**
         desired_speed = torch.zeros(num_peds, device=ped_features.device)  # N
         for i in range(num_peds):
             start_idx = 0
@@ -868,7 +868,7 @@ class TimeIndexedPedData(Dataset, Pedestrians):
         desired_speed = desired_speed.unsqueeze(0).unsqueeze(-1)
         desired_speed = desired_speed.repeat(num_frames, 1, 1)
         self.self_hist_features = hist_features
-        self.self_features = torch.cat((dest_features, hist_velocity, raw_data.acceleration, desired_speed), dim=-1) # MN:用以计算f_des
+        self.self_features = torch.cat((dest_features, hist_velocity, raw_data.acceleration, desired_speed), dim=-1) # MN**f_des
 
         self.labels = torch.cat((raw_data.position, raw_data.velocity, raw_data.acceleration), dim=-1)
 
@@ -876,7 +876,7 @@ class TimeIndexedPedData(Dataset, Pedestrians):
         self.labels = torch.cat((self.labels, collision_labels), dim=-1)
 
         # update time steps that are useless for validation
-        self.mask_a_pred = self.move_index_matrix(raw_data.mask_a, 'backward', skip_frames-1, dim=0) #腾出了前面25个ts置为0，因为这一部分要skip
+        self.mask_a_pred = self.move_index_matrix(raw_data.mask_a, 'backward', skip_frames-1, dim=0) **2**t**0**skip
         self.mask_v_pred = self.move_index_matrix(raw_data.mask_v, 'backward', skip_frames-1, dim=0)
         self.mask_p_pred = self.move_index_matrix(raw_data.mask_p, 'backward', skip_frames-1, dim=0)
 
@@ -936,12 +936,12 @@ class TimeIndexedPedDataPolarCoor(TimeIndexedPedData):
     @staticmethod
     def cart_to_polar(points, base):
         """
-        输入是笛卡尔坐标系的points x,y，输出是以base为极轴的极坐标系坐标 r,theta, r>0, theta in [-pi,pi]
-        如果输入坐标为nan，输出也会是nan
+       **points x,y**bas** r,theta, r>0, theta in [-pi,pi]
+       **nan**nan
 
         Args:
             points: c, t, n, 2
-            base: c, t, n, 2  (需要是归一化的)
+            base: c, t, n, 2  **)
 
         Returns:
             polar_coor: c, t, n, 2
@@ -967,10 +967,10 @@ class TimeIndexedPedDataPolarCoor(TimeIndexedPedData):
     @staticmethod
     def polar_to_cart(points, base):
         """
-        输入是以base为极轴的极坐标系的points r, theta，输出是笛卡尔坐标系x,y
+       **bas**points r, theta**x,y
         Args:
             points: c, t, n, 2
-            base: c, t, n, 2  (需要是归一化的)
+            base: c, t, n, 2  **)
 
         Returns:
             cart_coor: c, t, n, 2
@@ -986,11 +986,11 @@ class TimeIndexedPedDataPolarCoor(TimeIndexedPedData):
 
     def to_polar_system(self):
         """
-        需要转极坐标的：ped_features,obs_features, labels, dest features
+       **：ped_features,obs_features, labels, dest features
         Args:
             points: ..., N, 2
             base: ..., N, 2
-            ped_features: t * N * k1 * dim(6): relative position, velocity, acceleration in polar coordinates (以速度方向为坐标轴方向，以保持旋转不变性)
+            ped_features: t * N * k1 * dim(6): relative position, velocity, acceleration in polar coordinates ****)
             obs_features: t * N * k2 * dim(6):
             self_features: t * N * dim(2 + 2*k + 2 + 1): dest_features, hist_velocity, cur_acc, desired_speed
             labels: t * N * 6 Position, speed, acceleration, acc_polar at the t+1 time step
@@ -1022,8 +1022,8 @@ class TimeIndexedPedDataPolarCoor(TimeIndexedPedData):
 
 class PointwisePedData(Dataset):
     """
-    单步预测，和时间无关，因此直接把时间打散，同时利用filter，直接去掉frame里面
-    没有的人，从而对齐矩阵，加速训练
+   ********filter**fram**
+   ******
     Attributes:
         ped_features: (N * t) * k1 * dim(6)
         obs_features: (N * t) * k2 * dim(6)
@@ -1166,7 +1166,7 @@ class ChanneledTimeIndexedPedData(Dataset):
         """
         mode:
             'slice' - 
-            'split' - 分割
+            'split' -**
 
         """
         assert (data.num_frames > stride), "ValueError: stride < #total time steps"

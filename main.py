@@ -1,4 +1,4 @@
-from mid import MID
+from spdiff import SPDiff
 import argparse
 import os
 import yaml
@@ -34,7 +34,7 @@ def main():
     config["dataset"] = args.dataset
 
     config = EasyDict(config)
-    agent = MID(config)
+    agent = SPDiff(config)
 
     keyattr = ["lr","ft_lr", "data_dict_path", "finetune_dict_path", "epochs", "finetune_epochs", "dataset", "batch_size","diffnet", "seed"]
     keys = {}

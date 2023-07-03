@@ -200,7 +200,7 @@ class PointwisePedDataset(BaseDataset):
         self.test_data = [self.dataset[i] for i in test_idx]
         test_data_len = [len(u) for u in self.test_data]
 
-        # todo: 把test_data改为可以接收多个文件; 注意：分的时候需要有overlap才能充分利用数据。
+        # todo:**test_dat**;****overla**。
         self.test_data = self.test_data[0]
 
         self.train_data.to(args.device)
@@ -271,7 +271,7 @@ class PointwisePedDatasetOnlyTraining(BaseDataset):
 
     def build_dataset(self, args):
         """
-        TODO: 把timeindexedpeddataset支持接收多个文件
+        TODO:**timeindexedpeddatase**
         """
         assert self.raw_data, 'Error: Must load raw data before build dataset.'
 
@@ -327,7 +327,7 @@ class TimeIndexedPedDataset(BaseDataset):
 
     def build_dataset(self, args):
         """
-        TODO: 把timeindexedpeddataset支持接收多个文件
+        TODO:**timeindexedpeddatase**
         """
         assert self.raw_data, 'Error: Must load raw data before build dataset.'
 
@@ -383,7 +383,7 @@ class TimeIndexedPedDataset2(BaseDataset):
 
     def build_dataset(self, args, finetune_flag):
         """
-        TODO: 把timeindexedpeddataset支持接收多个文件
+        TODO:**timeindexedpeddatase**
         """
         assert self.raw_data, 'Error: Must load raw data before build dataset.'
 
@@ -441,7 +441,7 @@ class TimeIndexedPedDatasetforVis(BaseDataset):
 
     def build_dataset(self, args):
         """
-        TODO: 把timeindexedpeddataset支持接收多个文件
+        TODO:**timeindexedpeddatase**
         """
         assert self.raw_data, 'Error: Must load raw data before build dataset.'
 

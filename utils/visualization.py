@@ -123,11 +123,11 @@ def state_animation_compare(ax, data1:RawData, data2:RawData, *, movie_file=None
 
 
 def plot_trajectory(p_pred, p_label, name):
-    # 首先初始化图像
+    #**
     p_pred = p_pred.cpu()
     p_label = p_label.cpu()
     plt.figure()
-    # 对于 p_pred, p_label 进行遍历, 绘制轨迹
+    #** p_pred, p_label**,**
     for t in range(p_pred.shape[0]):
         for n in range(p_pred.shape[1]):
             if not np.isnan(p_pred[t, n, 0]):
@@ -144,6 +144,6 @@ def plot_trajectory(p_pred, p_label, name):
                     plt.scatter(p_label[t, n, 0], p_label[t, n, 1], c='b', marker='x')
                 if t>0 and not np.isnan(p_label[t-1, n, 0]):
                     plt.plot(p_label[t-1:t+1, n, 0], p_label[t-1:t+1, n, 1], c='b', linestyle='--')
-    f = plt.gcf()  #获取当前图像
+    f = plt.gcf()  **
     f.savefig('visualize_data/'+name+'.jpg')
-    f.clear()  #释放内存
+    f.clear()  **

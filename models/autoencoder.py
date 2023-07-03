@@ -20,7 +20,7 @@ class AutoEncoder(Module, DATA.Pedestrians):
         super().__init__()
         self.config = config
         self.encoder = encoder # 
-        self.diffnet = getattr(diffusion, config.diffnet) # diffusion decode用的模型,在DiffusionTraj中使用
+        self.diffnet = getattr(diffusion, config.diffnet) # diffusion decod****DiffusionTra**
 
         self.diffusion = DiffusionTraj( 
             # net = self.diffnet(point_dim=2, context_dim=config.encoder_dim, tf_layer=config.tf_layer, residual=False),
@@ -153,7 +153,7 @@ class AutoEncoder(Module, DATA.Pedestrians):
         v_res[..., :t_start + 1, :, :] = data.velocity[..., :t_start + 1, :, :]
         a_res[..., :t_start + 1, :, :] = data.acceleration[..., :t_start + 1, :, :]
 
-        # 维护一个mask_p
+        #**mask_p
         mask_p_new = torch.zeros(mask_p_.shape, device=mask_p_.device)
         mask_p_new[..., :t_start + 1, :] = data.mask_p[..., :t_start + 1, :].long()
 
@@ -268,7 +268,7 @@ class AutoEncoder(Module, DATA.Pedestrians):
 
             
 
-        # todo: 处理一下mask_v 和 mask_a; 现在只处理了mask_p
+        # todo:**mask_v** mask_a;**mask_p
         output = DATA.RawData(p_res, v_res, a_res, destination, destination, obstacles,
                                 mask_p_new, meta_data=data.meta_data)
         return output, dest_force_res, ped_force_res
@@ -330,7 +330,7 @@ class AutoEncoder(Module, DATA.Pedestrians):
         v_res[..., :t_start + 1, :, :] = data.velocity[..., :t_start + 1, :, :]
         a_res[..., :t_start + 1, :, :] = data.acceleration[..., :t_start + 1, :, :]
 
-        # 维护一个mask_p
+        #**mask_p
         mask_p_new = torch.zeros(mask_p_.shape, device=mask_p_.device)
         mask_p_new[..., :t_start + 1, :] = data.mask_p[..., :t_start + 1, :].long()
 
@@ -459,7 +459,7 @@ class AutoEncoder(Module, DATA.Pedestrians):
 
             
 
-        # todo: 处理一下mask_v 和 mask_a; 现在只处理了mask_p
+        # todo:**mask_v** mask_a;**mask_p
         output = DATA.RawData(p_res, v_res, a_res, destination, destination, obstacles,
                                 mask_p_new, meta_data=data.meta_data)
         return output, dest_force_res, ped_force_res
@@ -485,19 +485,19 @@ class AutoEncoder(Module, DATA.Pedestrians):
         if self.config.train_mode == 'origin':
             obs_traj, pred_traj_gt, obs_traj_rel, pred_traj_gt_rel,\
             obs_vel, pred_vel_gt, obs_acc, pred_acc_gt, non_linear_ped,\
-            loss_mask,V_obs,A_obs,Nei_obs,V_tr,A_tr,Nei_tr = batch # x_t:历史8个点，每个点6个特征（位置，速度，加速度）；y_t,待预测12个点，只预测位置。但是这里是用encoder捕获中间latent variable
+            loss_mask,V_obs,A_obs,Nei_obs,V_tr,A_tr,Nei_tr = batch # x_t**************）；y_t**1******encode**latent variable
 
             # feat_x_encoded = self.encode(batch,node_type) # B * 64
             loss = self._teacher_loss(obs_traj,pred_traj_gt,pred_traj_gt_rel)
             
         elif self.config.train_mode == 'multi':
             ped_features,obs_features,self_features, labels, self_hist_features,\
-            mask_p_pred, mask_v_pred, mask_a_pred = batch # 使用数据集提供的去除首尾问题的mask，这样不会从空数据训练第一个时刻的结果，也不会遇到下一时刻没有结果（到终点时）时现有的数据无法判断的情况（模型不需要关注这个）
+            mask_p_pred, mask_v_pred, mask_a_pred = batch #**mask**********）
             if self.config.esti_goal == 'acce':
                 y_t = labels[1:,:,4:6]
                 # y_t = labels[:-1,:,4:6]
                 y_t = clear_nan(y_t)
-                curr = labels[:-1,:,:6] # 当前状态，用于计算坐标
+                curr = labels[:-1,:,:6] #****
 
                 history = self_hist_features[:-1,:,:,:6] #bs, N, obs_len, 6
                 ped_features = ped_features[:-1] #bs, N, k_near, 6
@@ -508,15 +508,15 @@ class AutoEncoder(Module, DATA.Pedestrians):
                 loss = self.diffusion.get_loss(y_t, curr=curr,context=(history, ped_features, self_feature, obs_features),timestep=timestep,mask = mask)
             elif self.config.esti_goal == 'pos':
                 raise NotImplementedError
-                y_t = labels[1:,:,:2] # 舍弃掉第一个timestep——无法被预测
+                y_t = labels[1:,:,:2] #**timestep—**
                 y_t = clear_nan(y_t)
-                hist_pos = self_hist_features[:-1, :, :, :2] # 舍弃掉最后一个timestep（没有对应的label）
+                hist_pos = self_hist_features[:-1, :, :, :2] #**timestep**label）
                 hist_vel = torch.zeros_like(hist_pos, device=hist_pos.device)
                 hist_acce = torch.zeros_like(hist_pos, device=hist_pos.device)
                 hist_vel[:,:,1:,:] = self_hist_features[:-1, :, :-1, 2:4]
                 hist_acce[:,:,2:,:] = self_hist_features[:-1, :, :-2, 4:6]
                 history = torch.cat((hist_pos, hist_vel, hist_acce), dim=-1)
-                # mask = contexts[:,-1,:,:]!=contexts[:,-1,:,:] # 这里的mask是当前时刻的mask，下一步可能会有新人加入，忽略 TODO
+                # mask = contexts[:,-1,:,:]!=contexts[:,-1,:,:] #**mas**mask**** TODO
                 # mask = ~mask[...,0] # bs, N 
                 dest = self_features[:-1,:,:2]
                 mask = dest.abs().sum(dim=-1)==0
@@ -551,8 +551,8 @@ class AutoEncoder(Module, DATA.Pedestrians):
 
     def test_multiple_rollouts_for_training(self, data: DATA.TimeIndexedPedData, t_start=0):
         """
-        加入对于碰撞的惩罚，dynamic weighting;
-        加入对于加速度的预测
+       **，dynamic weighting;
+       **
         Args:
             data:
             t_start:
@@ -612,7 +612,7 @@ class AutoEncoder(Module, DATA.Pedestrians):
                                                             ped_features.detach(), 
                                                             self_features.detach(),
                                                             obs_features.detach()), 
-                                                curr = curr.detach()).view(*a_cur.shape)  #check一下有没有信息泄露的问题
+                                                curr = curr.detach()).view(*a_cur.shape)  #chec**
             # mask = mask_p_[:, t, :]  # c,n
 
             # if torch.sum(mask) > 0:
@@ -713,8 +713,8 @@ class AutoEncoder(Module, DATA.Pedestrians):
     
     def test_multiple_rollouts_for_training_geo(self, data: DATA.TimeIndexedPedData, t_start=0):
         """
-        加入对于碰撞的惩罚，dynamic weighting;
-        加入对于加速度的预测
+       **，dynamic weighting;
+       **
         Args:
             data:
             t_start:
@@ -784,7 +784,7 @@ class AutoEncoder(Module, DATA.Pedestrians):
                                                             obstacles.detach(),
                                                             near_obstacle_idx.detach(),
                                                             neigh_obs_mask.detach()),  
-                                                curr = curr.detach()).view(*a_cur.shape)  #check一下有没有信息泄露的问题
+                                                curr = curr.detach()).view(*a_cur.shape)  #chec**
                 # if a_next[mask_a_[:,t]].max()>15 or a_next[mask_a_[:,t]].isnan().any():
                 #     pdb.set_trace()
             # mask = mask_p_[:, t, :]  # c,n
@@ -973,7 +973,7 @@ class AutoEncoder(Module, DATA.Pedestrians):
 
         """
         collisions = torch.sum(collisions, dim=1)  # c, n
-        collisions[collisions > 0] = 1.  # 只看有没有
+        collisions[collisions > 0] = 1.  #**
         collision_w = collisions
         collision_w = collision_w.unsqueeze(1).repeat(1, pred.shape[1], 1)
         collision_w = collision_w.unsqueeze(-1)  # c, t, n, 1

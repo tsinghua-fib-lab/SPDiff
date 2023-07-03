@@ -188,7 +188,7 @@ def mask_mse_func(input1, input2, mask):
 
 def post_process(data, pred_data, pred_mask_p, mask_p):
         """
-        把到达终点以后的人置为终点
+       **
         t, n, 2
         """
         waypoints = data.waypoints  # *c, d, n, 2

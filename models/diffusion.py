@@ -511,7 +511,7 @@ class SpatialTransformer_ped_inter_2(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -523,7 +523,7 @@ class SpatialTransformer_ped_inter_2(Module):
         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
         ped_features = context[1] #bs, N, k, 6
-        ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+        ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
         context_ped = torch.cat((hist_embedded,ped_emb), dim=-1)
@@ -534,7 +534,7 @@ class SpatialTransformer_ped_inter_2(Module):
         beta = beta.view(x.shape[0], 1, 1).repeat([1,x.shape[-2],1])
         time_emb = torch.cat([beta, torch.sin(beta), torch.cos(beta)], dim=-1)
         
-        spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+        spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         spatial_input_embedded = self.concat_ped1(spatial_input_embedded, torch.cat((context_ped, time_emb),dim=-1))
         # output_ped = self.decode_ped1(context_ped, spatial_input_embedded, time_emb)
@@ -582,7 +582,7 @@ class SpatialTransformer_ped_inter(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -594,7 +594,7 @@ class SpatialTransformer_ped_inter(Module):
         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
         ped_features = context[1] #bs, N, k, 6
-        ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+        ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
         context_ped = torch.cat((hist_embedded,ped_emb), dim=-1)
@@ -605,7 +605,7 @@ class SpatialTransformer_ped_inter(Module):
         beta = beta.view(x.shape[0], 1, 1).repeat([1,x.shape[-2],1])
         time_emb = torch.cat([beta, torch.sin(beta), torch.cos(beta)], dim=-1)
 
-        spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+        spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
 
         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         spatial_input_embedded = self.concat_ped1(context_ped, spatial_input_embedded, time_emb)
@@ -653,7 +653,7 @@ class SpatialTransformer_ped_inter_notrans(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -665,7 +665,7 @@ class SpatialTransformer_ped_inter_notrans(Module):
         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
         ped_features = context[1] #bs, N, k, 6
-        ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+        ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
         context_ped = torch.cat((hist_embedded,ped_emb), dim=-1)
@@ -677,7 +677,7 @@ class SpatialTransformer_ped_inter_notrans(Module):
         beta = beta.view(x.shape[0], 1, 1).repeat([1,x.shape[-2],1])
         time_emb = torch.cat([beta, torch.sin(beta), torch.cos(beta)], dim=-1)
         
-        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         
         spatial_input_embedded = self.concat_ped1(context_ped, spatial_input_embedded, time_emb)
@@ -739,7 +739,7 @@ class SpatialTransformer_ped_inter_notrans_wohistory_ver2(Module):
         # origin_shape = hist_embedded.shape
         # hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         # _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         # hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -751,7 +751,7 @@ class SpatialTransformer_ped_inter_notrans_wohistory_ver2(Module):
         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
         ped_features = context[1] #bs, N, k, 6
-        ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+        ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
         # context_ped = torch.cat((hist_embedded,ped_emb), dim=-1)
@@ -764,7 +764,7 @@ class SpatialTransformer_ped_inter_notrans_wohistory_ver2(Module):
         beta = beta.view(x.shape[0], 1, 1).repeat([1,x.shape[-2],1])
         time_emb = torch.cat([beta, torch.sin(beta), torch.cos(beta)], dim=-1)
         
-        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         
         spatial_input_embedded = self.concat_ped1(context_ped, spatial_input_embedded, time_emb)
@@ -815,7 +815,7 @@ class SpatialTransformer_ped_inter_notrans_ver2(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -827,7 +827,7 @@ class SpatialTransformer_ped_inter_notrans_ver2(Module):
         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
         ped_features = context[1] #bs, N, k, 6
-        ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+        ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
         context_ped = torch.cat((hist_embedded,ped_emb), dim=-1)
@@ -839,7 +839,7 @@ class SpatialTransformer_ped_inter_notrans_ver2(Module):
         beta = beta.view(x.shape[0], 1, 1).repeat([1,x.shape[-2],1])
         time_emb = torch.cat([beta, torch.sin(beta), torch.cos(beta)], dim=-1)
         
-        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         
         spatial_input_embedded = self.concat_ped1(context_ped, spatial_input_embedded, time_emb)
@@ -908,7 +908,7 @@ class SpatialTransformer_ped_obs_inter_notrans_ver2(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -920,7 +920,7 @@ class SpatialTransformer_ped_obs_inter_notrans_ver2(Module):
         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
         ped_features = context[1] #bs, N, k, 6
-        ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+        ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
         context_ped = torch.cat((hist_embedded,ped_emb), dim=-1)
@@ -936,7 +936,7 @@ class SpatialTransformer_ped_obs_inter_notrans_ver2(Module):
         beta = beta.view(x.shape[0], 1, 1).repeat([1,x.shape[-2],1])
         time_emb = torch.cat([beta, torch.sin(beta), torch.cos(beta)], dim=-1)
         
-        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         
         spatial_input_embedded = self.concat_ped1(context_ped, spatial_input_embedded, time_emb)
@@ -987,7 +987,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_csql(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -999,7 +999,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_csql(Module):
         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
         ped_features = context[1] #bs, N, k, 6
-        ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+        ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
         context_ped = torch.cat((hist_embedded,ped_emb), dim=-1)
@@ -1011,7 +1011,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_csql(Module):
         beta = beta.view(x.shape[0], 1, 1).repeat([1,x.shape[-2],1])
         time_emb = torch.cat([beta, torch.sin(beta), torch.cos(beta)], dim=-1)
         
-        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         
         spatial_input_embedded = self.concat_ped1(torch.cat((context_ped,time_emb),dim=-1), spatial_input_embedded)
@@ -1062,7 +1062,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_csql2(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -1074,7 +1074,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_csql2(Module):
         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
         ped_features = context[1] #bs, N, k, 6
-        ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+        ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
         context_ped = torch.cat((hist_embedded,ped_emb), dim=-1)
@@ -1086,7 +1086,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_csql2(Module):
         beta = beta.view(x.shape[0], 1, 1).repeat([1,x.shape[-2],1])
         time_emb = torch.cat([beta, torch.sin(beta), torch.cos(beta)], dim=-1)
         
-        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         
         spatial_input_embedded = self.concat_ped1(torch.cat((context_ped,time_emb),dim=-1), spatial_input_embedded)
@@ -1140,7 +1140,7 @@ class SpatialTransformer_ped_inter_notrans_ver3(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -1152,7 +1152,7 @@ class SpatialTransformer_ped_inter_notrans_ver3(Module):
         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
         ped_features = context[1] #bs, N, k, 6
-        ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+        ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
         context_ped = torch.cat((hist_embedded,ped_emb), dim=-1)
@@ -1165,7 +1165,7 @@ class SpatialTransformer_ped_inter_notrans_ver3(Module):
         beta = beta.view(x.shape[0], 1, 1).repeat([1,x.shape[-2],1])
         time_emb = torch.cat([beta, torch.sin(beta), torch.cos(beta)], dim=-1)
         
-        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         
         spatial_input_embedded = self.concat_ped1(context_ped, spatial_input_embedded, time_emb)
@@ -1229,7 +1229,7 @@ class SpatialTransformer_ped_inter_notrans_ver3_wohistory(Module):
         # origin_shape = hist_embedded.shape
         # hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         # _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         # hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -1241,7 +1241,7 @@ class SpatialTransformer_ped_inter_notrans_ver3_wohistory(Module):
         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
         ped_features = context[1] #bs, N, k, 6
-        ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+        ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
         context_ped = ped_emb
@@ -1253,7 +1253,7 @@ class SpatialTransformer_ped_inter_notrans_ver3_wohistory(Module):
         beta = beta.view(x.shape[0], 1, 1).repeat([1,x.shape[-2],1])
         time_emb = torch.cat([beta, torch.sin(beta), torch.cos(beta)], dim=-1)
         
-        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         
         spatial_input_embedded = self.concat_ped1(context_ped, spatial_input_embedded, time_emb)
@@ -1320,7 +1320,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_klearnedenc(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -1332,7 +1332,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_klearnedenc(Module):
         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
         ped_features = context[1] #bs, N, k, 6
-        ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+        ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
         context_ped = torch.cat((hist_embedded,ped_emb), dim=-1)
@@ -1345,7 +1345,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_klearnedenc(Module):
         # time_emb = torch.cat([beta, torch.sin(beta), torch.cos(beta)], dim=-1)
         time_emb = self.kencoder(beta)
         
-        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         
         spatial_input_embedded = self.concat_ped1(context_ped, spatial_input_embedded, time_emb)
@@ -1397,7 +1397,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_ksinuenc(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -1409,7 +1409,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_ksinuenc(Module):
         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
         ped_features = context[1] #bs, N, k, 6
-        ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+        ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
         context_ped = torch.cat((hist_embedded,ped_emb), dim=-1)
@@ -1423,7 +1423,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_ksinuenc(Module):
         time_emb = time_emb.view(time_emb.shape[0], 1, time_emb.shape[-1]).repeat([1,x.shape[-2],1])
         # time_emb = torch.cat([beta, torch.sin(beta), torch.cos(beta)], dim=-1)
         
-        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         
         spatial_input_embedded = self.concat_ped1(context_ped, spatial_input_embedded, time_emb)
@@ -1474,7 +1474,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_ksinuenc_afver1(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -1486,7 +1486,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_ksinuenc_afver1(Module):
         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
         ped_features = context[1] #bs, N, k, 6
-        ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+        ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
         context_ped = torch.cat((hist_embedded,ped_emb), dim=-1)
@@ -1500,7 +1500,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_ksinuenc_afver1(Module):
         time_emb = time_emb.view(time_emb.shape[0], 1, time_emb.shape[-1]).repeat([1,x.shape[-2],1])
         # time_emb = torch.cat([beta, torch.sin(beta), torch.cos(beta)], dim=-1)
         
-        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         
         spatial_input_embedded = self.concat_ped1(context_ped, spatial_input_embedded, time_emb)
@@ -1552,7 +1552,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_ksinuenc_afver1_3(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -1564,7 +1564,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_ksinuenc_afver1_3(Module):
         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
         ped_features = context[1] #bs, N, k, 6
-        ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+        ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
         context_ped = torch.cat((hist_embedded,ped_emb), dim=-1)
@@ -1578,7 +1578,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_ksinuenc_afver1_3(Module):
         time_emb = time_emb.view(time_emb.shape[0], 1, time_emb.shape[-1]).repeat([1,x.shape[-2],1])
         # time_emb = torch.cat([beta, torch.sin(beta), torch.cos(beta)], dim=-1)
         
-        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         
         spatial_input_embedded = self.concat_ped1(context_ped, spatial_input_embedded, time_emb)
@@ -1632,7 +1632,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_ksinuenc_afver1_2(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -1644,7 +1644,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_ksinuenc_afver1_2(Module):
         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
         ped_features = context[1] #bs, N, k, 6
-        ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+        ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
         context_ped = torch.cat((hist_embedded,ped_emb), dim=-1)
@@ -1658,7 +1658,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_ksinuenc_afver1_2(Module):
         time_emb = time_emb.view(time_emb.shape[0], 1, time_emb.shape[-1]).repeat([1,x.shape[-2],1])
         # time_emb = torch.cat([beta, torch.sin(beta), torch.cos(beta)], dim=-1)
         
-        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         
         spatial_input_embedded = self.concat_ped1(context_ped, spatial_input_embedded, time_emb)
@@ -1710,7 +1710,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_layer2(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -1722,7 +1722,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_layer2(Module):
         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
         ped_features = context[1] #bs, N, k, 6
-        ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+        ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
         context_ped = torch.cat((hist_embedded,ped_emb), dim=-1)
@@ -1739,7 +1739,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_layer2(Module):
         
         
         
-        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         
         spatial_input_embedded = self.concat_ped1(context_ped, spatial_input_embedded, time_emb)
@@ -1791,7 +1791,7 @@ class SpatialTransformer_ped_inter_notrans_ver4(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -1803,7 +1803,7 @@ class SpatialTransformer_ped_inter_notrans_ver4(Module):
         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
         ped_features = context[1] #bs, N, k, 6
-        ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+        ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
         context_ped = torch.cat((hist_embedded,ped_emb), dim=-1)
@@ -1821,7 +1821,7 @@ class SpatialTransformer_ped_inter_notrans_ver4(Module):
         
         
         
-        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         
         # spatial_input_embedded = self.concat_ped1(context_ped, spatial_input_embedded, time_emb)
@@ -1887,7 +1887,7 @@ class SpatialTransformer_ped_inter_notrans_ver4(Module):
 #         origin_shape = hist_embedded.shape
 #         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
 #         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-#         hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+#         hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
 #         hist_embedded = self.lstm_output(hist_embedded)
         
 #         self_features = context[2]
@@ -1899,7 +1899,7 @@ class SpatialTransformer_ped_inter_notrans_ver4(Module):
 #         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
 #         ped_features = context[1] #bs, N, k, 6
-#         ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+#         ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
 #         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
 #         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
 #         context_ped = torch.cat((hist_embedded,ped_emb), dim=-1)
@@ -1917,7 +1917,7 @@ class SpatialTransformer_ped_inter_notrans_ver4(Module):
         
         
         
-#         # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+#         # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
 #         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         
 #         # spatial_input_embedded = self.concat_ped1(context_ped, spatial_input_embedded, time_emb)
@@ -1983,7 +1983,7 @@ class SpatialTransformer_ped_inter_notrans_ver4_layer2(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -1995,7 +1995,7 @@ class SpatialTransformer_ped_inter_notrans_ver4_layer2(Module):
         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
         ped_features = context[1] #bs, N, k, 6
-        ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+        ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
         context_ped = torch.cat((hist_embedded,ped_emb), dim=-1)
@@ -2013,7 +2013,7 @@ class SpatialTransformer_ped_inter_notrans_ver4_layer2(Module):
         
         
         
-        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         
         # spatial_input_embedded = self.concat_ped1(context_ped, spatial_input_embedded, time_emb)
@@ -2079,7 +2079,7 @@ class SpatialTransformer_ped_inter_notrans_ver5(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -2091,7 +2091,7 @@ class SpatialTransformer_ped_inter_notrans_ver5(Module):
         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
         ped_features = context[1] #bs, N, k, 6
-        ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+        ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
         context_ped = torch.cat((hist_embedded,ped_emb), dim=-1)
@@ -2108,7 +2108,7 @@ class SpatialTransformer_ped_inter_notrans_ver5(Module):
         
         
         
-        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         
         spatial_input_embedded = self.concat_ped1(context_ped, spatial_input_embedded, time_emb)
@@ -2179,7 +2179,7 @@ class SpatialTransformer_ped_obs_inter_notrans_ver5_layer2(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -2191,7 +2191,7 @@ class SpatialTransformer_ped_obs_inter_notrans_ver5_layer2(Module):
         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
         ped_features = context[1] #bs, N, k, 6
-        ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+        ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
         context_ped = torch.cat((hist_embedded,ped_emb), dim=-1)
@@ -2214,7 +2214,7 @@ class SpatialTransformer_ped_obs_inter_notrans_ver5_layer2(Module):
         
         
         
-        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         
         spatial_input_embedded = self.concat_ped1(context_ped, spatial_input_embedded, time_emb)
@@ -2267,7 +2267,7 @@ class SpatialTransformer_ped_inter_notrans_ver5_layer2(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -2279,7 +2279,7 @@ class SpatialTransformer_ped_inter_notrans_ver5_layer2(Module):
         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
         ped_features = context[1] #bs, N, k, 6
-        ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+        ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
         context_ped = torch.cat((hist_embedded,ped_emb), dim=-1)
@@ -2296,7 +2296,7 @@ class SpatialTransformer_ped_inter_notrans_ver5_layer2(Module):
         
         
         
-        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         
         spatial_input_embedded = self.concat_ped1(context_ped, spatial_input_embedded, time_emb)
@@ -2361,7 +2361,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_crossattn(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -2373,7 +2373,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_crossattn(Module):
         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
         ped_features = context[1] #bs, N, k, 6
-        ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+        ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
         context_ped = torch.cat((hist_embedded,ped_emb), dim=-1)
@@ -2385,7 +2385,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_crossattn(Module):
         beta = beta.view(x.shape[0], 1, 1).repeat([1,x.shape[-2],1])
         time_emb = torch.cat([beta, torch.sin(beta), torch.cos(beta)], dim=-1)
         
-        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+        # spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         for block in self.concat_ped1:
             spatial_input_embedded = block(torch.cat((context_ped, time_emb),dim=-1), spatial_input_embedded)
@@ -2437,7 +2437,7 @@ class SpatialTransformer_ped_inter_wo_history(Module):
         # origin_shape = hist_embedded.shape
         # hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         # _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         # hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -2449,7 +2449,7 @@ class SpatialTransformer_ped_inter_wo_history(Module):
         pred_acc_dest = (desired_speed * dest_direction - self_features[..., 2:4]) / self.tau
         
         ped_features = context[1] #bs, N, k, 6
-        ped_emb = self.ped_encoder1(ped_features) # TODO:内存增长点：40MB
+        ped_emb = self.ped_encoder1(ped_features) # TODO**：40MB
         ped_emb = self.ped_encoder2(ped_emb) #bs, N, k, dim
         ped_emb = torch.sum(ped_emb, dim=-2) #bs, N, dim
         context_ped = ped_emb
@@ -2461,7 +2461,7 @@ class SpatialTransformer_ped_inter_wo_history(Module):
         beta = beta.view(x.shape[0], 1, 1).repeat([1,x.shape[-2],1])
         time_emb = torch.cat([beta, torch.sin(beta), torch.cos(beta)], dim=-1)
         
-        spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO：内存增长150MB
+        spatial_input_embedded = self.spatial_encoder(spatial_input_embedded, nei_list) #TODO**150MB
         # spatial_input_embedded = self.concat2(hist_embedded, spatial_input_embedded, time_emb)
         spatial_input_embedded = self.concat_ped1(context_ped, spatial_input_embedded, time_emb)
         output_ped = self.decode_ped1(context_ped, spatial_input_embedded, time_emb)
@@ -2487,7 +2487,7 @@ class SpatialTransformer_ped_inter_geometric(Module):
         # origin_shape = hist_embedded.shape
         # hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         # _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         # hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -2539,7 +2539,7 @@ class SpatialTransformer_ped_inter_geometric_cond(Module):
         # origin_shape = hist_embedded.shape
         # hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         # _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         # hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -2605,7 +2605,7 @@ class SpatialTransformer_ped_inter_geometric_cond_w_history(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded) # bs,N,embsize_out
         
         self_features = context[2]
@@ -2672,7 +2672,7 @@ class SpatialTransformer_ped_inter_geometric_cond_w_history_wo_af(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded) # bs,N,embsize_out
         
         self_features = context[2]
@@ -2742,7 +2742,7 @@ class SpatialTransformer_ped_inter_geometric_cond_w_obs_w_history(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -2821,7 +2821,7 @@ class SpatialTransformer_ped_inter_geometric_cond_w_obs_w_history_wo_af(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -2900,7 +2900,7 @@ class SpatialTransformer_ped_inter_geometric_cond_w_obs_wo_history(Module):
         # origin_shape = hist_embedded.shape
         # hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         # _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         # hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -2979,7 +2979,7 @@ class SpatialTransformer_ped_inter_geometric_cond_w_obs_w_history2(Module):
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -3060,7 +3060,7 @@ class SpatialTransformer_ped_inter_geometric_cond_w_obs_w_history_acce_ver3(Modu
         origin_shape = hist_embedded.shape
         hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -3132,7 +3132,7 @@ class SpatialTransformer_ped_inter_geometric_cond_acce(Module):
         # origin_shape = hist_embedded.shape
         # hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         # _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         # hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -3199,7 +3199,7 @@ class SpatialTransformer_ped_inter_geometric_cond_acce_ver2(Module):
         # origin_shape = hist_embedded.shape
         # hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         # _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         # hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -3266,7 +3266,7 @@ class SpatialTransformer_ped_inter_geometric_cond_acce_ver3(Module):
         # origin_shape = hist_embedded.shape
         # hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         # _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         # hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -3333,7 +3333,7 @@ class SpatialTransformer_ped_inter_geometric_cond_acce_ver4(Module):
         # origin_shape = hist_embedded.shape
         # hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         # _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         # hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -3400,7 +3400,7 @@ class SpatialTransformer_ped_inter_geometric_all(Module):
         # origin_shape = hist_embedded.shape
         # hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         # _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         # hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -3471,7 +3471,7 @@ class SpatialTransformer_ped_inter_geometric_all_ver2(Module):
         # origin_shape = hist_embedded.shape
         # hist_embedded = hist_embedded.flatten(start_dim=0,end_dim=1) #bs*N,his_len,embsize
         # _, (hist_embedded,_) = self.history_LSTM(hist_embedded) # 1, bs*N, lstm hidden size
-        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO:内存增长点
+        # hist_embedded = hist_embedded.squeeze().view(*origin_shape[:2],-1) # bs,N,embsize # TODO**
         # hist_embedded = self.lstm_output(hist_embedded)
         
         self_features = context[2]
@@ -3742,7 +3742,7 @@ class DiffusionTraj(Module):
         
         
 
-        e_rand = torch.randn_like(x_0).cuda()  # (B, N, d),这里的N是未来轨迹的数量，对应原文大T
+        e_rand = torch.randn_like(x_0).cuda()  # (B, N, d)******T
         x_t = c0 * x_0 + c1 * e_rand
         nei_list = None
         p0 = curr[...,:2] # B, N, 2
@@ -3773,7 +3773,7 @@ class DiffusionTraj(Module):
         # c0 = torch.sqrt(alpha_bar).view(-1, 1, 1).cuda()       # (B, 1, 1)
         # c1 = torch.sqrt(1 - alpha_bar).view(-1, 1, 1).cuda()   # (B, 1, 1)
 
-        # e_rand = torch.randn_like(x_0).cuda()  # (B, N, d),这里的N是未来轨迹的数量，对应原文大T
+        # e_rand = torch.randn_like(x_0).cuda()  # (B, N, d)******T
         # x_t = c0 * x_0 + c1 * e_rand
         # nei_list = None
         # p0 = curr[...,:2] # B, N, 2
@@ -3800,7 +3800,7 @@ class DiffusionTraj(Module):
         for i in range(p0.shape[0]):
             isnan = torch.isnan(p0[i,:,0]) # N
             index = torch.where(~isnan) 
-            # 构造y
+            #**y
             y = torch.zeros((p0.shape[1], p0.shape[1]), device=p0.device) # N, N
             index = torch.meshgrid(index[0],index[0])
             y[index[0], index[1]] = 1

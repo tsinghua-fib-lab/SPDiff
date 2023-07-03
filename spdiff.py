@@ -305,7 +305,7 @@ class SPDiff():
                                         traj_pred = self.model.generate_onestep(history, dest_pos)
                                     elif self.config.history_dim==2:
                                         traj_pred = self.model.generate_onestep(history[...,:2], dest_pos)
-                                    mask = dest_pos.abs().sum(dim=-1)==0 # t, N #TODO: 正确的mask应该是dest_x=dest_y=0的点（代表此时已到达终点或者没有终点，生成的要mask掉,在训练步也记得改）
+                                    mask = dest_pos.abs().sum(dim=-1)==0 # t, N #TODO:**mas**dest_x=dest_y=******mas****）
                                     # mask[0] = mask[1]
                                     val_mse = mask_mse_func(traj_pred, gt, ~mask)
                                     print(f"Val Dataset {i} Epoch {epoch} val mse {val_mse}")

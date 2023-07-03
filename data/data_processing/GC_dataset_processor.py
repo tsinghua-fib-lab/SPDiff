@@ -117,7 +117,7 @@ if __name__ == '__main__':
         destination.append([(traj[-1][0], traj[-1][1], traj[-1][2])])
 
 
-    # 假设障碍物的半径是 2m，在广场中间的位置。由于尚未进行照片坐标到真实世界坐标的转换，因此（凭目测）取 y 方向位置为 13 而非 15。
+    #** 2m********** y** 13** 15。
     R = 0.14667 * width / 2
     theta = np.linspace(0, 2*np.pi, 100)
     obstacles = np.stack((R * np.cos(theta) + 0.45333*width, R * np.sin(theta) + 0.28974*length), axis=1)
