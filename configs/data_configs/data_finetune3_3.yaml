@@ -1,7 +1,0 @@
-train:
-  - './data_origin/UCY_dataset/UCY_Dataset_time0-54_timeunit0.08.npy'
-  - './data_origin/UCY_dataset/UCY_Dataset_time54-108_timeunit0.08.npy'
-  # - './data_origin/UCY_dataset/UCY_Dataset_time108-162_timeunit0.08.npy'
-
-valid:
-  - './data_origin/UCY_dataset/UCY_Dataset_time162-216_timeunit0.08.npy'
