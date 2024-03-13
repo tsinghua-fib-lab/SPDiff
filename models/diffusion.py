@@ -467,7 +467,7 @@ class SpatialTransformer_ped_inter_2(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -546,7 +546,7 @@ class SpatialTransformer_ped_inter(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -617,7 +617,7 @@ class SpatialTransformer_ped_inter_notrans(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -701,7 +701,7 @@ class SpatialTransformer_ped_inter_notrans_wohistory_ver2(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -778,7 +778,7 @@ class SpatialTransformer_ped_inter_notrans_ver2(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -863,7 +863,7 @@ class SpatialTransformer_ped_obs_inter_notrans_ver2(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
             self.obs_encode_flag=False
             config.context_dim = config.ped_encode_dim2 + config.history_lstm_out
@@ -950,7 +950,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_csql(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -1025,7 +1025,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_csql2(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -1100,7 +1100,7 @@ class SpatialTransformer_ped_inter_notrans_ver3(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -1189,7 +1189,7 @@ class SpatialTransformer_ped_inter_notrans_ver3_wohistory(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -1277,7 +1277,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_klearnedenc(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -1359,7 +1359,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_ksinuenc(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -1436,7 +1436,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_ksinuenc_afver1(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -1514,7 +1514,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_ksinuenc_afver1_3(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -1594,7 +1594,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_ksinuenc_afver1_2(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -1672,7 +1672,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_layer2(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -1753,7 +1753,7 @@ class SpatialTransformer_ped_inter_notrans_ver4(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -1849,7 +1849,7 @@ class SpatialTransformer_ped_inter_notrans_ver4(Module):
 #     def __init__(self, config):
 #         super().__init__()
 #         self.config=config
-#         if 'ucy' in config.data_dict_path:
+#         if 'ucy' in config.finetune_dict_path:
 #             self.tau=5/6
 #         else:
 #             self.tau=2
@@ -1945,7 +1945,7 @@ class SpatialTransformer_ped_inter_notrans_ver4_layer2(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -2041,7 +2041,7 @@ class SpatialTransformer_ped_inter_notrans_ver5(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -2134,7 +2134,7 @@ class SpatialTransformer_ped_obs_inter_notrans_ver5_layer2(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
             self.obs_encode_flag=False
             config.context_dim = config.ped_encode_dim2 + config.history_lstm_out
@@ -2229,7 +2229,7 @@ class SpatialTransformer_ped_inter_notrans_ver5_layer2(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -2320,7 +2320,7 @@ class SpatialTransformer_ped_inter_notrans_ver2_crossattn(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -2400,7 +2400,7 @@ class SpatialTransformer_ped_inter_wo_history(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -2472,7 +2472,7 @@ class SpatialTransformer_ped_inter_geometric(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -2513,7 +2513,7 @@ class SpatialTransformer_ped_inter_geometric_cond(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -2571,7 +2571,7 @@ class SpatialTransformer_ped_inter_geometric_cond_w_history(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -2638,7 +2638,7 @@ class SpatialTransformer_ped_inter_geometric_cond_w_history_wo_af(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -2705,7 +2705,7 @@ class SpatialTransformer_ped_inter_geometric_cond_w_obs_w_history(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -2784,7 +2784,7 @@ class SpatialTransformer_ped_inter_geometric_cond_w_obs_w_history_wo_af(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -2863,7 +2863,7 @@ class SpatialTransformer_ped_inter_geometric_cond_w_obs_wo_history(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -2942,7 +2942,7 @@ class SpatialTransformer_ped_inter_geometric_cond_w_obs_w_history2(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -3022,7 +3022,7 @@ class SpatialTransformer_ped_inter_geometric_cond_w_obs_w_history_acce_ver3(Modu
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -3100,7 +3100,7 @@ class SpatialTransformer_ped_inter_geometric_cond_acce(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -3167,7 +3167,7 @@ class SpatialTransformer_ped_inter_geometric_cond_acce_ver2(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -3234,7 +3234,7 @@ class SpatialTransformer_ped_inter_geometric_cond_acce_ver3(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -3301,7 +3301,7 @@ class SpatialTransformer_ped_inter_geometric_cond_acce_ver4(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -3368,7 +3368,7 @@ class SpatialTransformer_ped_inter_geometric_all(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -3439,7 +3439,7 @@ class SpatialTransformer_ped_inter_geometric_all_ver2(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -3505,7 +3505,7 @@ class SpatialTransformer_ped_obs_inter(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
             self.obs_encode_flag=False
             config.context_dim = config.ped_encode_dim2 + config.history_lstm_out
@@ -3588,7 +3588,7 @@ class SpatialTransformer_dest_force(Module):
     def __init__(self, config):
         super().__init__()
         self.config=config
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
