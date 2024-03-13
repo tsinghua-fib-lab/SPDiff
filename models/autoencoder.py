@@ -33,7 +33,7 @@ class AutoEncoder(Module, DATA.Pedestrians):
             ),
             config=config
         )
-        if 'ucy' in config.data_dict_path:
+        if 'ucy' in config.finetune_dict_path:
             self.tau=5/6
         else:
             self.tau=2
