@@ -31,3 +31,6 @@ CUDA_VISIBLE_DEVICES=[GPU_USED] python main.py --config configs/ucy.yaml
 ```
 
 More parameters can be tuned in the corresponding YAML configuration files.
+
+## Citation
+awaiting publishment
