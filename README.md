@@ -7,7 +7,7 @@ In this paper, we propose a social physics-informed diffusion model named SPDiff
 
 This project was described in the research article on conference AAAI2024.
 
-The pdf link can be found at https://arxiv.org/abs/2402.06680.
+The pdf can be found at https://arxiv.org/abs/2402.06680.
 
 ## Installation
 ### Environment
