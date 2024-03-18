@@ -33,4 +33,13 @@ CUDA_VISIBLE_DEVICES=[GPU_USED] python main.py --config configs/ucy.yaml
 More parameters can be tuned in the corresponding YAML configuration files.
 
 ## Citation
-awaiting publishment
+```
+@misc{chen2024social,
+      title={Social Physics Informed Diffusion Model for Crowd Simulation}, 
+      author={Hongyi Chen and Jingtao Ding and Yong Li and Yue Wang and Xiao-Ping Zhang},
+      year={2024},
+      eprint={2402.06680},
+      archivePrefix={arXiv},
+      primaryClass={physics.soc-ph}
+}
+```
