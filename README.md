@@ -34,12 +34,14 @@ More parameters can be tuned in the corresponding YAML configuration files.
 
 ## Citation
 ```
-@misc{chen2024social,
-      title={Social Physics Informed Diffusion Model for Crowd Simulation}, 
-      author={Hongyi Chen and Jingtao Ding and Yong Li and Yue Wang and Xiao-Ping Zhang},
-      year={2024},
-      eprint={2402.06680},
-      archivePrefix={arXiv},
-      primaryClass={physics.soc-ph}
+@inproceedings{Chen_Ding_Li_Wang_Zhang_2024, 
+title={Social Physics Informed Diffusion Model for Crowd Simulation}, 
+volume={38}, 
+number={1}, 
+journal={Proceedings of the AAAI Conference on Artificial Intelligence}, 
+author={Chen, Hongyi and Ding, Jingtao and Li, Yong and Wang, Yue and Zhang, Xiao-Ping}, 
+year={2024},
+month={Mar.}, 
+pages={474-482} 
 }
 ```
