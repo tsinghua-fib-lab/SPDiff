@@ -211,19 +211,20 @@ class MaximumMeanDiscrepancy(object):
         super(MaximumMeanDiscrepancy, self).__init__()
 
     def guassian_kernel(self, source, target, kernel_mul=2.0, kernel_num=5, fix_sigma=None):
-        ""**Gra**
-        source: sample_size_1 * feature_size**
-        target: sample_size_2 * feature_size**
-        kernel_mul:****bandwith
-        kernel_num:**
-        fix_sigma:**
-            return: (sample_size_1 + sample_size_2) * (sample_size_1 + sample_size_2**
-                           ****:
-                            [   K_ss K_st
-                                K_ts K_tt ]
+        """
+        **Gaussian kernel function**
+        Args:
+            source: source data
+            target: target data
+            kernel_mul: bandwidth
+            kernel_num: number of kernel
+            fix_sigma: bandwidth
+        Returns:
+            sum(kernel_val): sum of kernel value
+            
         """
         n_samples = int(source.size()[0]) + int(target.size()[0])
-        total = torch.cat([source, target], dim=0)  #**
+        total = torch.cat([source, target], dim=0)  
 
         total0 = total.unsqueeze(0).expand(int(total.size(0)),
                                            int(total.size(0)),
@@ -231,7 +232,7 @@ class MaximumMeanDiscrepancy(object):
         total1 = total.unsqueeze(1).expand(int(total.size(0)),
                                            int(total.size(0)),
                                            int(total.size(1)))
-        L2_distance = ((total0 - total1) ** 2).sum(2)  #**|x-y|
+        L2_distance = ((total0 - total1) ** 2).sum(2) 
 
         #**bandwidth
         if fix_sigma:
@@ -246,7 +247,7 @@ class MaximumMeanDiscrepancy(object):
         kernel_val = [torch.exp(-L2_distance / bandwidth_temp) for
                       bandwidth_temp in bandwidth_list]
 
-        return sum(kernel_val)  #**
+        return sum(kernel_val) 
 
     def __call__(self, source, target, kernel_mul=2.0, kernel_num=5, fix_sigma=None):
         # source.dim=2 
@@ -499,14 +500,14 @@ def get_nearby_distance_mmd(data_pred_pos, data_pred_velo, label_pos, label_velo
 def get_dist_mmd(pred_pos, pred_velo, label_pos, label_velo, dist_threshold, near_k, MMD, func_class):
     heading_direction = func_class.get_heading_direction(pred_velo)
     near_ped_dist, near_ped_idx = func_class.get_nearby_obj_in_sight(
-            pred_pos, pred_pos, heading_direction, near_k, angle_threshold=180)**top k=6
+            pred_pos, pred_pos, heading_direction, near_k, angle_threshold=180)
     near_ped_dist = near_ped_dist[(near_ped_dist < dist_threshold) &
                                 (near_ped_dist > 0)]
     near_ped_dist = near_ped_dist.flatten().unsqueeze(-1)
     
     heading_direction_gt = func_class.get_heading_direction(label_velo)
     near_ped_dist_gt, near_ped_idx_gt = func_class.get_nearby_obj_in_sight(
-            label_pos, label_pos, heading_direction_gt, near_k, 180)**top k=6
+            label_pos, label_pos, heading_direction_gt, near_k, 180)
     near_ped_dist_gt = near_ped_dist_gt[(near_ped_dist_gt < dist_threshold) &
                                 (near_ped_dist_gt > 0)]
     near_ped_dist_gt = near_ped_dist_gt.flatten().unsqueeze(-1)

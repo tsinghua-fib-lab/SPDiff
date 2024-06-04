@@ -12,7 +12,7 @@ variance_mode: 'linear'
 # 'linear', 'cosine'
 val_mode: multistep
 # Training Prarmeters:
-diffnet: SpatialTransformer_ped_inter_geometric_cond_w_obs_w_history_ver2 #TransformerConcatLinear
+diffnet: Diffuser_ped_inter_geometric_cond_w_obs_w_history 
 
 yt_encoder_layers: 3
 spatial_emsize: 128
@@ -51,10 +51,10 @@ epochs: -1
 # dataset
 save_model: True
 finetune: True
-finetune_epochs: 200
-finetune_data_path:  configs/data_configs/data_finetune2_3.yaml
-rebuild_finetune_dataset: False
-finetune_dict_path: dataset_built/pretrain_gc_1104_trainonreal_mt_fn10_t3v1.pkl
+total_epochs: 200
+data_config:  configs/data_configs/data_finetune_gc.yaml
+rebuild_dataset: False
+data_dict_path: dataset_built/pretrain_gc_1104_trainonreal_mt_fn10_t3v1.pkl
 # dataset_built/pretrain_ucy_0119_trainonreal_mt_fn10.pkl
 model_sd_path: False
 finetune_trainmode: multistep # singlestep/multistep
@@ -91,5 +91,4 @@ eval_mode: False
 
 # Data Parameters:
 device: cuda
-eval_device: None
 note: None

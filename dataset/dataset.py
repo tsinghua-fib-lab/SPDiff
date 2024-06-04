@@ -65,7 +65,7 @@ class NodeTypeDataset(data.Dataset):
     def __len__(self):
         return self.len
 
-    def __getitem__(self, i): # data_loade**iteratio**
+    def __getitem__(self, i): 
         (scene, t, node) = self.index[i]
 
         if self.augment:

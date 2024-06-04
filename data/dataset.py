@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-***
 
 """
 import torch
@@ -200,7 +199,6 @@ class PointwisePedDataset(BaseDataset):
         self.test_data = [self.dataset[i] for i in test_idx]
         test_data_len = [len(u) for u in self.test_data]
 
-        # todo:**test_dat**;****overla**。
         self.test_data = self.test_data[0]
 
         self.train_data.to(args.device)
@@ -271,7 +269,6 @@ class PointwisePedDatasetOnlyTraining(BaseDataset):
 
     def build_dataset(self, args):
         """
-        TODO:**timeindexedpeddatase**
         """
         assert self.raw_data, 'Error: Must load raw data before build dataset.'
 
@@ -327,7 +324,6 @@ class TimeIndexedPedDataset(BaseDataset):
 
     def build_dataset(self, args):
         """
-        TODO:**timeindexedpeddatase**
         """
         assert self.raw_data, 'Error: Must load raw data before build dataset.'
 
@@ -383,7 +379,6 @@ class TimeIndexedPedDataset2(BaseDataset):
 
     def build_dataset(self, args, finetune_flag):
         """
-        TODO:**timeindexedpeddatase**
         """
         assert self.raw_data, 'Error: Must load raw data before build dataset.'
 
@@ -441,7 +436,6 @@ class TimeIndexedPedDatasetforVis(BaseDataset):
 
     def build_dataset(self, args):
         """
-        TODO:**timeindexedpeddatase**
         """
         assert self.raw_data, 'Error: Must load raw data before build dataset.'
 

@@ -36,18 +36,15 @@ def main():
     config = EasyDict(config)
     agent = SPDiff(config)
 
-    keyattr = ["lr","ft_lr", "data_dict_path", "finetune_dict_path", "epochs", "finetune_epochs", "dataset", "batch_size","diffnet", "seed"]
+    keyattr = ["lr","ft_lr", "data_dict_path", "data_dict_path", "epochs", "total_epochs", "dataset", "batch_size","diffnet", "seed"]
     keys = {}
     for k,v in config.items():
         if k in keyattr:
             keys[k] = v
     
     pprint(keys)
-    
-    if config["eval_mode"]:
-        agent.eval()
-    else:
-        agent.train()
+
+    agent.train()
 
 
 

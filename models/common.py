@@ -54,7 +54,7 @@ class PositionalEncoding(nn.Module):
 
 
 class MLP(nn.Module):
-    def __init__(self, input_dim, output_dim, hidden_size=(1024, 512), activation='relu', discrim=False, dropout=-1):
+    def __init__(self, input_dim, output_dim, hidden_size=(1024, 512), activation='relu', discrim=False, dropout=-1, outact = True):
         super(MLP, self).__init__()
         dims = []
         dims.append(input_dim)
@@ -75,6 +75,7 @@ class MLP(nn.Module):
 
         self.sigmoid = nn.Sigmoid() if discrim else None
         self.dropout = dropout
+        self.outact = outact
 
     def forward(self, x):
         for i in range(len(self.layers)):
@@ -83,10 +84,12 @@ class MLP(nn.Module):
                 x = self.activation(x)
                 if self.dropout != -1:
                     x = nn.Dropout(min(0.1, self.dropout/3) if i == 1 else self.dropout)(x)
-            elif self.sigmoid:
+            elif self.sigmoid and self.outact:
                 x = self.sigmoid(x)
-            else:
+            elif self.outact:
                 x = self.activation(x)
+            else:
+                x = x
         return x
 
 class ResBlock(nn.Module):

@@ -397,6 +397,154 @@ class ConvEGNN4_obs(nn.Module):
 
         return torch.cat([x_new, v_new, a_new] ,dim=-1), h_st_ped
 
+
+class ConvEGNN5_1(nn.Module):
+    """
+        change log: modified dist to exp(-dist)
+                    modified normalization
+        see update in ver3
+    """
+    def __init__(self, in_dim, hid_dim, cuda=True):
+        super().__init__()
+        self.hid_dim=hid_dim
+        self.cuda = cuda
+        
+        # computes messages based on hidden representations -> [0, 1]
+        self.f_e = nn.Sequential(
+            nn.Linear(in_dim*2+1, hid_dim), nn.SiLU(),
+            nn.Linear(hid_dim, hid_dim), nn.SiLU())
+        
+        # update acceleration
+        self.f_x = nn.Sequential(
+            nn.Linear(hid_dim, hid_dim), nn.SiLU(),
+            nn.Linear(hid_dim, 1))
+        
+        self.f_a = nn.Sequential(
+            nn.Linear(hid_dim, hid_dim), nn.SiLU(),
+            nn.Linear(hid_dim, 1))
+        
+        # updates hidden representations -> [0, 1]
+        self.f_h = nn.Sequential(
+            nn.Linear(in_dim+hid_dim, hid_dim), nn.SiLU(),
+            nn.Linear(hid_dim, hid_dim))
+    
+    def forward(self, ped_features, h_st, h_neigh, rela_features, neigh_mask):
+        """
+            ped_features: [bs, N, 6]
+            h_st: [bs, N, dim_h]
+            h_neigh: [bs, N, k, dim_h]
+            rela_features: [bs, N, k, 6]
+            neigh_index: [bs, N, k]
+        """
+        dists = torch.norm(rela_features[..., :2], dim=-1) # bs, N, k
+        # pdb.set_trace()
+        
+        neigh_num = neigh_mask.sum(dim=-1) # bs, N
+        
+        dists[~neigh_mask.bool()] = 1e6
+        exp_dists = torch.exp(-dists)
+        # exp_dists[~neigh_mask.bool()] = 0.
+        # compute messages
+        tmp = torch.cat([h_st.unsqueeze(-2).repeat((1, 1, dists.shape[-1], 1)), 
+                            h_neigh, exp_dists.unsqueeze(-1)], dim=-1) #bs, N, k, dim_h*2+1
+        m_ij = self.f_e(tmp) #bs, N, k, dim_h
+
+        # update in ver3
+        m_ij[~neigh_mask.bool()] = 0.
+        
+        # predict edges
+
+        agg = - rela_features[..., :2] * self.f_x(m_ij) # bs, N, k, 2
+        # agg[~neigh_mask.bool()] = 0. # bs, N, k, 2 # deleted in ver3
+        
+        agg = 1/(dists.unsqueeze(-1)+1e-7) * agg
+        agg = agg.sum(dim=-2) # bs, N, 2
+        a_new = self.f_a(h_st) * ped_features[...,4: ] + agg
+        v_new = ped_features[...,2:4] + a_new
+        x_new = ped_features[..., :2] + v_new # bs, N, 2
+        
+        # average e_ij-weighted messages
+        # m_i is num_nodes x hid_dim
+        m_i = m_ij.sum(dim=-2) # bs, N, dim_h
+        
+        # update hidden representations (with residual)
+        h_st = h_st + self.f_h(torch.cat([h_st, m_i], dim=-1))
+
+        return torch.cat([x_new, v_new, a_new] ,dim=-1), h_st
+ 
+class ConvEGNN5_1_final_layer(nn.Module):
+    """
+        change log: modified dist to exp(-dist)
+                    modified normalization
+        see update in ver3
+    """
+    def __init__(self, in_dim, hid_dim, cuda=True):
+        super().__init__()
+        self.hid_dim=hid_dim
+        self.cuda = cuda
+        
+        # computes messages based on hidden representations -> [0, 1]
+        self.f_e = nn.Sequential(
+            nn.Linear(in_dim*2+1, hid_dim), nn.SiLU(),
+            nn.Linear(hid_dim, hid_dim), nn.SiLU())
+        
+        # update acceleration
+        self.f_x = nn.Sequential(
+            nn.Linear(hid_dim, hid_dim), nn.SiLU(),
+            nn.Linear(hid_dim, 1))
+        
+        # self.f_a = nn.Sequential(
+        #     nn.Linear(hid_dim, hid_dim), nn.SiLU(),
+        #     nn.Linear(hid_dim, 1))
+        
+        # updates hidden representations -> [0, 1]
+        # self.f_h = nn.Sequential(
+            # nn.Linear(in_dim+hid_dim, hid_dim), nn.SiLU(),
+            # nn.Linear(hid_dim, hid_dim))
+    
+    def forward(self, ped_features, h_st, h_neigh, rela_features, neigh_mask):
+        """
+            ped_features: [bs, N, 6]
+            h_st: [bs, N, dim_h]
+            h_neigh: [bs, N, k, dim_h]
+            rela_features: [bs, N, k, 6]
+            neigh_index: [bs, N, k]
+        """
+        dists = torch.norm(rela_features[..., :2], dim=-1) # bs, N, k
+        # pdb.set_trace()
+        
+        neigh_num = neigh_mask.sum(dim=-1) # bs, N
+        
+        dists[~neigh_mask.bool()] = 1e6
+        exp_dists = torch.exp(-dists)
+        # exp_dists[~neigh_mask.bool()] = 0.
+        # compute messages
+        tmp = torch.cat([h_st.unsqueeze(-2).repeat((1, 1, dists.shape[-1], 1)), 
+                            h_neigh, exp_dists.unsqueeze(-1)], dim=-1) #bs, N, k, dim_h*2+1
+        m_ij = self.f_e(tmp) #bs, N, k, dim_h
+
+        # update in ver3
+        m_ij[~neigh_mask.bool()] = 0.
+        
+        # predict edges
+        agg = -rela_features[..., :2] * self.f_x(m_ij) # bs, N, k, 2
+        # agg[~neigh_mask.bool()] = 0. # bs, N, k, 2 # deleted in ver3
+        
+        agg = 1/(dists.unsqueeze(-1)+1e-7) * agg
+        a_new = agg.sum(dim=-2) # bs, N, 2
+        # a_new = self.f_a(h_st) * ped_features[...,4: ] + agg
+        # v_new = ped_features[...,2:4] + a_new
+        # x_new = ped_features[..., :2] + v_new # bs, N, 2
+        
+        # average e_ij-weighted messages  
+        # m_i is num_nodes x hid_dim
+        # m_i = m_ij.sum(dim=-2) # bs, N, dim_h
+        
+        # update hidden representations (with residual)
+        # h_st = h_st + self.f_h(torch.cat([h_st, m_i], dim=-1))
+
+        return a_new
+   
 class NetEGNN_acce(nn.Module, DATA.Pedestrians):
     """
         use convegnn4
@@ -997,6 +1145,101 @@ class NetEGNN_hid_obs2(nn.Module, DATA.Pedestrians):
 
         return output # bs, N, 6; bs, N, dim_hd
 
+class NetEGNN_hid2_5_1_withfl(nn.Module, DATA.Pedestrians):
+    def __init__(self, in_dim=3+8+8, hid_dim=64, out_dim=1, n_layers=3, cuda=True):
+        super().__init__()
+        self.hid_dim=hid_dim
+        self.k_dim = 3
+        self.encode_v = nn.Linear(1, 8) 
+        self.encode_a = nn.Linear(1, 8) 
+        self.emb = nn.Linear(in_dim, hid_dim) 
+
+        self.gnn = nn.ModuleList(ConvEGNN5_1(hid_dim, hid_dim, cuda=cuda) for _ in range(n_layers))
+        self.out_layer = ConvEGNN5_1_final_layer(hid_dim, hid_dim, cuda=cuda)
+        # self.gnn = nn.Sequential(*self.gnn)
+        
+        # self.pre_mlp = nn.Sequential(
+        #     nn.Linear(hid_dim, hid_dim), nn.SiLU(),
+        #     nn.Linear(hid_dim, hid_dim))
+        
+        # self.post_mlp = nn.Sequential(
+        #     nn.Dropout(0.4),
+        #     nn.Linear(hid_dim, hid_dim), nn.SiLU(),
+        #     nn.Linear(hid_dim, out_dim))
+
+        if cuda: self.cuda()
+        self.cuda = cuda
+    
+    def forward(self, context, k_emb):
+        """
+            context: (list), 
+                [0]ped_features (bs, N, 6), 
+                [1]neigh_mask (bs, N, k), 
+                [2]neigh_index (bs, N, k)
+            k_emb: [bs, N, 3]
+        """
+        ped_features = context[0]
+        neigh_mask = context[1]
+        neigh_index = context[2]
+        
+        # print('before gnn velo',ped_features[...,2:4].isnan().sum())
+        # print('before gnn acce',ped_features[...,4: ].isnan().sum())
+        # print('before gnn kemb',k_emb.isnan().sum())
+
+        
+        h_initial = torch.cat((self.encode_v(torch.norm(ped_features[...,2:4],dim=-1, keepdim=True)),
+                               self.encode_a(torch.norm(ped_features[...,4: ],dim=-1, keepdim=True)),
+                               k_emb), dim=-1) # bs, N, 19 
+        # print('before gnn h_initial',h_initial.isnan().sum())
+        h_st = self.emb(h_initial) # bs, N, dim_h
+        # print('emb layer weight', list(self.emb.parameters())[0].isnan().sum())
+        # print('emb layer bias', list(self.emb.parameters())[1].isnan().sum())
+        # print('before gnn h_st',h_st.isnan().sum())
+        h_neigh = torch.zeros(h_st.shape[:2]+neigh_index.shape[-1:]+h_st.shape[-1:])
+        acce = ped_features[..., 4:].clone()
+
+        for i, model in enumerate(self.gnn):
+            # h_neigh = torch.zeros(neigh_index.shape+[h_st.shape[-1]]) # bs, N, k, dim_h
+            # relative_features = torch.zeros(neigh_index.shape+[ped_features.shape[-1]]) # bs, N, k, 6
+            # print('layer:',i)
+
+            # print('h_st',h_st.isnan().sum())
+            h_neigh = torch.gather(h_st.unsqueeze(1).expand(h_st.shape[:2]+h_st.shape[1:]), 2, neigh_index.unsqueeze(-1).repeat((1,1,1,self.hid_dim))) # bs, N, k, dim_h
+            # h_neigh = torch.gather(h_st.unsqueeze(1).repeat(1,h_st.shape[1],1,1), 2, neigh_index.unsqueeze(-1).repeat((1,1,1,self.hid_dim))) # bs, N, k, dim_h
+
+            relative_features = self.get_relative_quantity(ped_features, ped_features) # bs, N, N, 6
+            # pdb.set_trace()
+            dim = neigh_index.dim()
+            neigh_index2 = neigh_index.unsqueeze(-1).repeat(*([1]*dim + [relative_features.shape[-1]]))  # bs,n,k,6
+            relative_features = torch.gather(relative_features, -2, neigh_index2)  # bs,n,k,6
+
+            h_neigh[~neigh_mask.bool()]=0.
+            relative_features[~neigh_mask.bool()]=0.
+            # print('h_neigh',h_neigh.isnan().sum())
+            #print('relative_features',relative_features.isnan().sum())
+
+            #ped_features, h_st = model(ped_features, h_st, h_neigh, relative_features, neigh_mask)
+            ped_features, h_st = model(torch.cat((ped_features[...,:4], acce), dim=-1), h_st, h_neigh, relative_features, neigh_mask)
+            #print('acce',ped_features[...,4:].isnan().sum())
+            #print('h_st',h_st.isnan().sum())
+
+        # output = ped_features[...,4:]
+        h_neigh = torch.gather(h_st.unsqueeze(1).expand(h_st.shape[:2]+h_st.shape[1:]), 2, neigh_index.unsqueeze(-1).repeat((1,1,1,self.hid_dim))) # bs, N, k, dim_h
+        # h_neigh = torch.gather(h_st.unsqueeze(1).repeat(1,h_st.shape[1],1,1), 2, neigh_index.unsqueeze(-1).repeat((1,1,1,self.hid_dim))) # bs, N, k, dim_h
+
+        relative_features = self.get_relative_quantity(ped_features, ped_features) # bs, N, N, 6
+        # pdb.set_trace()
+        dim = neigh_index.dim()
+        neigh_index2 = neigh_index.unsqueeze(-1).repeat(*([1]*dim + [relative_features.shape[-1]]))  # bs,n,k,6
+        relative_features = torch.gather(relative_features, -2, neigh_index2)  # bs,n,k,6
+
+        h_neigh[~neigh_mask.bool()]=0.
+        relative_features[~neigh_mask.bool()]=0.
+        a_next = self.out_layer(torch.cat((ped_features[...,:4], acce), dim=-1), h_st, h_neigh, relative_features, neigh_mask)
+
+        
+
+        return a_next # bs, N, 2
 
 class NetEGNN_hid_ped_obs2(nn.Module, DATA.Pedestrians):
     def __init__(self, in_dim=3+8+8, hid_dim=64, hid_dim_obs=64, n_layers=3, n_layers_obs=1, cuda=True):

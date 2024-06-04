@@ -1,6 +1,6 @@
 ############ MID Config #############
 # optimizer
-lr: 0.002
+lr: 0.005
 # nei_attn_mask: True
 nei_padding_mask: True
 batch_size: 32
@@ -12,7 +12,7 @@ variance_mode: 'linear'
 # 'linear', 'cosine'
 val_mode: multistep
 # Training Parameters:
-diffnet: SpatialTransformer_ped_inter_geometric_cond_w_history_ver2 #TransformerConcatLinear
+diffnet: Diffuser_ped_inter_geometric_cond_w_history 
 
 yt_encoder_layers: 3
 spatial_emsize: 128
@@ -43,11 +43,12 @@ pred_seq_len: 20
 epochs: -1
 
 # dataset
+save_model: True
 finetune: True
-finetune_epochs: 160
-finetune_data_path: configs/data_configs/data_finetune3_1.yaml
-rebuild_finetune_dataset: True
-finetune_dict_path: dataset_built/pretrain_ucy_0403_trainonreal_mt_fn10_t2v1.pkl
+total_epochs: 160
+data_config: configs/data_configs/data_finetune_ucy.yaml
+rebuild_dataset: True
+data_dict_path: dataset_built/pretrain_ucy_0403_trainonreal_mt_fn10_t3v1.pkl
 # dataset_built/pretrain_ucy_0119_trainonreal_mt_fn10.pkl
 model_sd_path: False
 finetune_trainmode: multistep # singlestep/multistep
@@ -57,7 +58,7 @@ collision_threshold: 0.5
 
 dataset_type: timeindex
 finetune_flag: 1
-valid_steps: 2
+valid_steps: 10
 data_dir: processed_data_sf
 topk_ped: 6
 sight_angle_ped: 90
@@ -75,7 +76,7 @@ train_mode: multi
 eval_batch_size: 256
 k_eval: 25
 
-seed: 456 #456
+seed: 666 #456
 eval_every: 10
 
 # Testing
@@ -84,5 +85,4 @@ eval_mode: False
 
 # Data Parameters:
 device: cuda
-eval_device: None
 note: None

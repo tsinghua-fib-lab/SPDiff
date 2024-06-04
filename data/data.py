@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-***
-
-"""
 import math
 import torch
 import torch.utils
@@ -88,7 +84,6 @@ class RawData(object):
         Dataset format description: see
         https://tsingroc-wiki.atlassian.net/wiki/spaces/TSINGROC/pages/2261120#%E6%95%B0%E6%8D%AE%E9%9B%86%E5%AD%98%E5%82%A8%E6%A0%BC%E5%BC%8F%E8%AF%B4%E6%98%8E
 
-        Note:**，trajector**
         """
         print(f"Loading from '{data_path}'...")
         out_of_bound = torch.tensor(float('nan'))
@@ -98,15 +93,14 @@ class RawData(object):
         meta_data, trajectories, destinations, obstacles = data
         obstacles = torch.tensor(obstacles, dtype=torch.float)
 
-        # todo:****obstacle****。
         if obstacles.shape[-1] == 0:
             obstacles = torch.tensor([[1e4, 1e4], [1e4+1, 1e4+1]], dtype=torch.float)
 
         self.meta_data = meta_data
         self.num_steps = max([u[-1][-1] for u in trajectories]) + 1
         self.num_pedestrians = len(trajectories)
-        self.num_destinations = max([len(u) for u in destinations])  # destination **t**ts。
-        position = torch.zeros((self.num_steps, self.num_pedestrians, 2))   # ts*num pe******
+        self.num_destinations = max([len(u) for u in destinations])  
+        position = torch.zeros((self.num_steps, self.num_pedestrians, 2))   
         velocity = torch.zeros((self.num_steps, self.num_pedestrians, 2))
         acceleration = torch.zeros((self.num_steps, self.num_pedestrians, 2))
         mask_p = torch.zeros((self.num_steps, self.num_pedestrians))
@@ -118,7 +112,7 @@ class RawData(object):
                 mask_p[t, i] = 1
                 mask_v[t, i] = 1
                 mask_a[t, i] = 1
-            mask_v[t, i] = 0 # mynote:**********1
+            mask_v[t, i] = 0 
             mask_a[t, i] = 0
             if t >= 1:
                 mask_a[t - 1, i] = 0
@@ -127,8 +121,8 @@ class RawData(object):
                                                "any nan values! "
 
         destination = torch.zeros((self.num_steps, self.num_pedestrians, 2))
-        waypoints = torch.zeros((self.num_destinations, self.num_pedestrians, 2)) + out_of_bound # mynote: not all pedestrains have D(num_destinations) destinations
-        dest_idx = torch.zeros((self.num_steps, self.num_pedestrians), dtype=torch.long) # MN:**inde**t**de**
+        waypoints = torch.zeros((self.num_destinations, self.num_pedestrians, 2)) + out_of_bound 
+        dest_idx = torch.zeros((self.num_steps, self.num_pedestrians), dtype=torch.long) 
         dest_num = torch.tensor([len(relays) for relays in destinations])
 
         for i, relays in enumerate(destinations):
@@ -147,11 +141,11 @@ class RawData(object):
         # dest_idx[mask_p == 0] = out_of_bound  # in this way we can directly use dest_idx to slice dest
         position[mask_p == 0] = out_of_bound
         velocity = torch.cat(
-            (position[1:, :, :], position[-1:, :, :]), 0) - position    # MN******timeste**）
+            (position[1:, :, :], position[-1:, :, :]), 0) - position    
         velocity /= meta_data['time_unit']
         velocity[mask_v == 0] = 0
         acceleration = torch.cat(
-            (velocity[1:, :, :], velocity[-1:, :, :]), 0) - velocity    # MN**
+            (velocity[1:, :, :], velocity[-1:, :, :]), 0) - velocity    
         acceleration /= meta_data['time_unit']
         acceleration[mask_a == 0] = 0
 
@@ -163,7 +157,7 @@ class RawData(object):
         self.position_desc = [position.masked_fill(mask_p.unsqueeze(-1),0).mean(),
                               position.masked_fill(mask_p.unsqueeze(-1),0).std()
                               ]
-        self.velocity_desc = [velocity.masked_fill(mask_v.unsqueeze(-1),0).mean(), #TODO**positio**mask**mask_v,mask_a
+        self.velocity_desc = [velocity.masked_fill(mask_v.unsqueeze(-1),0).mean(), 
                               velocity.masked_fill(mask_v.unsqueeze(-1),0).std()
                               ]
         self.acceleration_desc = [acceleration.masked_fill(mask_a.unsqueeze(-1),0).mean(),
@@ -361,14 +355,13 @@ class Pedestrians(object):
     @staticmethod
     def get_heading_direction(velocity):
         """
-        todo:**functio****v=**，**heading direction
         Function: infer people's heading direction (without normalization);
         Using linear smoothing
         Args:
             velocity: (*c, t, N, 2)
         Return:
             heading_direction: (*c, t, N, 2)
-            **)
+            
         """
         heading_direction = velocity.clone()
         if heading_direction.dim() == 3:
@@ -398,7 +391,7 @@ class Pedestrians(object):
                             heading_direction[j, t, i, :] = tmp_direction
                         else:
                             tmp_direction = heading_direction[j, t, i, :]
-        #**
+        
         tmp_direction = torch.norm(heading_direction, p=2, dim=-1, keepdim=True)
         tmp_direction_ = tmp_direction.clone()
         tmp_direction_[tmp_direction_ == 0] += 0.1
@@ -509,8 +502,6 @@ class Pedestrians(object):
         Return:
             dest_features: *c, t, N, 2
         Notice:
-           ****positio****fram****relative
-            feature**0**zero padding**in**。
             c is channel size
         """
 
@@ -521,7 +512,7 @@ class Pedestrians(object):
         heading_direction = self.get_heading_direction(velocity)
 
         near_ped_dist, near_ped_idx = self.get_nearby_obj_in_sight(
-            position, position, heading_direction, topk_ped, sight_angle_ped)**top k=6
+            position, position, heading_direction, topk_ped, sight_angle_ped) # top_k=6
         ped = torch.cat((position, velocity, acceleration), dim=-1)
         ped_features = self.get_relative_quantity(ped, ped)  # *c t N N dim
         ped_features, neigh_ped_mask = self.get_filtered_features(
@@ -536,7 +527,7 @@ class Pedestrians(object):
             obstacles = obstacles.unsqueeze(-3).repeat(
                 *([1]*(dim-2) + [num_steps] + [1, 1]))  # *c, t, N, 2
             near_obstacle_dist, near_obstacle_idx = self.get_nearby_obj_in_sight(
-                position, obstacles, heading_direction, topk_obs, sight_angle_obs) **top k=10
+                position, obstacles, heading_direction, topk_obs, sight_angle_obs) # top k=10
             obs = torch.cat((obstacles, torch.zeros(obstacles.shape, device=obstacles.device),
                              torch.zeros(obstacles.shape, device=obstacles.device)), dim=-1)
             obs_features = self.get_relative_quantity(ped, obs)  # t N M dim
@@ -549,14 +540,14 @@ class Pedestrians(object):
     @staticmethod
     def calculate_collision_label(ped_features):
         """
-       **1******
+
         Args:
             ped_features: ...,k,6: (p,v,a)
 
         Returns:
             collisions: ...,k
         """
-        #**1**0.1****0.**
+
         with torch.no_grad():
             time = torch.arange(10, device=ped_features.device) * 0.1
             time = time.resize(*([1] * (ped_features.dim()-1)), 10, 1)
@@ -572,9 +563,8 @@ class Pedestrians(object):
     @staticmethod
     def collision_detection(position, threshold, real_position=None):
         """
-       ****positio**na**fram****fram**
         Args:
-            position: t,n,2 / c,t,n,2****
+            position: t,n,2 / c,t,n,2
 
 
         Returns:
@@ -602,11 +592,8 @@ class Pedestrians(object):
         # valid_steps[~valid_steps.isnan()] = 1
         # valid_steps[valid_steps.isnan()] = 0
         # valid_steps = torch.sum(valid_steps, dim=-2, keepdim=True)  # c,1,n
-
-        #******2****。
-        # todo:**30****
         if real_position is not None:
-            #******
+        
             assert real_position.dim() == 3, 'Value Error: real_position only supports 3 dimensional inputs (t,n,2)'
             relative_pos = Pedestrians.get_relative_quantity(real_position, real_position)  # c,n,n,2
             rel_distance = torch.norm(relative_pos, p=2, dim=-1)  # c,n,n
@@ -625,7 +612,6 @@ class Pedestrians(object):
                 friends[friends > 25] = 0
                 friends = friends.unsqueeze(0)
             elif collisions.dim() == 4:
-                #**：****ste******
                 friends = collisions[:, :4]
                 friends = torch.sum(friends, dim=1)
                 friends[friends > 0] = 1
@@ -723,10 +709,10 @@ class TimeIndexedPedData(Dataset, Pedestrians):
         mask = idx_matrix.clone()
         moving_shape = list(mask.shape)
         moving_shape[dim] = n_steps
-        if direction == 'backward': #**0~ts-n_step****
+        if direction == 'backward': 
             mask = mask.index_select(dim, torch.arange(mask.shape[dim] - n_steps, device=idx_matrix.device))
             mask = torch.cat((torch.zeros(moving_shape, device=idx_matrix.device), mask), dim=dim)
-        elif direction == 'forward': #**n_steps~t****
+        elif direction == 'forward': 
             mask = mask.index_select(dim, torch.arange(n_steps, mask.shape[dim], device=idx_matrix.device))
             mask = torch.cat((mask, torch.zeros(moving_shape, device=idx_matrix.device)), dim=dim)
         mask *= idx_matrix
@@ -735,15 +721,11 @@ class TimeIndexedPedData(Dataset, Pedestrians):
     @staticmethod
     def turn_detection(data: RawData):
         """
-       ******：
-            1****，1******）
-            2****）
-            3******）
         Args:
             data:
 
         Returns:
-            non_abnormal: N**0**1
+            non_abnormal: t,n
 
         """
         position = data.position.clone()
@@ -751,7 +733,7 @@ class TimeIndexedPedData(Dataset, Pedestrians):
         T, N, _ = position.shape
         position[position.isnan()] = 1e4
 
-        #**
+        
         starts = torch.zeros((N, 2), device=position.device) + 1e4
         v_starts = torch.zeros((N, 2), device=position.device) + 1e4
         ends = torch.zeros((N, 2), device=position.device) + 1e4
@@ -762,16 +744,16 @@ class TimeIndexedPedData(Dataset, Pedestrians):
         dist = torch.norm(ends - starts, p=2, dim=-1) + 1e-6
         norm_v = torch.norm(v_starts, p=2, dim=-1) + 1e-6
 
-        #**:
+        
         cos_theta = torch.sum((ends - starts) * v_starts, dim=-1) / dist / norm_v
         cos_theta[cos_theta < np.cos(3.1415 * 20 / 180)] = 0
         cos_theta[cos_theta > 0] = 1
 
         non_abnormal = cos_theta
 
-        # todo:**
 
-        #**
+
+        
         mean_velocity = torch.norm(velocity, p=2, dim=-1)  # t,n
         mean_velocity = torch.sum(mean_velocity, dim=0) / torch.sum(data.mask_v, dim=0)
 
@@ -792,10 +774,7 @@ class TimeIndexedPedData(Dataset, Pedestrians):
                 historical velocity: vx0, vy0, vx1, vy1, ..., vxn, vyn
             labels: t * N * 6 Position, speed, acceleration at the t+1 time step
             mask_a: t * N
-            mask_p_pred: t * N****time ste****history feature****
 
-        Notes:
-           **25ste**
         """
 
         # raw_data.to(args.device)
@@ -821,7 +800,7 @@ class TimeIndexedPedData(Dataset, Pedestrians):
         self.near_obstacle_idx = near_obstacle_idx
         self.neigh_obs_mask = neigh_obs_mask
 
-        #****
+        
         self.abnormal_mask = self.turn_detection(raw_data)
 
         self.ped_features = ped_features
@@ -856,7 +835,7 @@ class TimeIndexedPedData(Dataset, Pedestrians):
         hist_velocity = hist_velocity.reshape(num_frames, num_peds, -1)  # t, N, k*2 
 
         # calculate desired_speed
-        skip_frames = args.skip_frames  # settings:**2**frames****2**frame**desired-spee**
+        skip_frames = args.skip_frames  
         desired_speed = torch.zeros(num_peds, device=ped_features.device)  # N
         for i in range(num_peds):
             start_idx = 0
@@ -876,7 +855,7 @@ class TimeIndexedPedData(Dataset, Pedestrians):
         self.labels = torch.cat((self.labels, collision_labels), dim=-1)
 
         # update time steps that are useless for validation
-        self.mask_a_pred = self.move_index_matrix(raw_data.mask_a, 'backward', skip_frames-1, dim=0) **2**t**0**skip
+        self.mask_a_pred = self.move_index_matrix(raw_data.mask_a, 'backward', skip_frames-1, dim=0) 
         self.mask_v_pred = self.move_index_matrix(raw_data.mask_v, 'backward', skip_frames-1, dim=0)
         self.mask_p_pred = self.move_index_matrix(raw_data.mask_p, 'backward', skip_frames-1, dim=0)
 
@@ -936,12 +915,9 @@ class TimeIndexedPedDataPolarCoor(TimeIndexedPedData):
     @staticmethod
     def cart_to_polar(points, base):
         """
-       **points x,y**bas** r,theta, r>0, theta in [-pi,pi]
-       **nan**nan
-
         Args:
             points: c, t, n, 2
-            base: c, t, n, 2  **)
+            base: c, t, n, 2 )
 
         Returns:
             polar_coor: c, t, n, 2
@@ -967,10 +943,9 @@ class TimeIndexedPedDataPolarCoor(TimeIndexedPedData):
     @staticmethod
     def polar_to_cart(points, base):
         """
-       **bas**points r, theta**x,y
         Args:
             points: c, t, n, 2
-            base: c, t, n, 2  **)
+            base: c, t, n, 2 )
 
         Returns:
             cart_coor: c, t, n, 2
@@ -986,11 +961,11 @@ class TimeIndexedPedDataPolarCoor(TimeIndexedPedData):
 
     def to_polar_system(self):
         """
-       **：ped_features,obs_features, labels, dest features
+       ped_features,obs_features, labels, dest features
         Args:
             points: ..., N, 2
             base: ..., N, 2
-            ped_features: t * N * k1 * dim(6): relative position, velocity, acceleration in polar coordinates ****)
+            ped_features: t * N * k1 * dim(6): relative position, velocity, acceleration in polar coordinates
             obs_features: t * N * k2 * dim(6):
             self_features: t * N * dim(2 + 2*k + 2 + 1): dest_features, hist_velocity, cur_acc, desired_speed
             labels: t * N * 6 Position, speed, acceleration, acc_polar at the t+1 time step
@@ -1022,8 +997,6 @@ class TimeIndexedPedDataPolarCoor(TimeIndexedPedData):
 
 class PointwisePedData(Dataset):
     """
-   ********filter**fram**
-   ******
     Attributes:
         ped_features: (N * t) * k1 * dim(6)
         obs_features: (N * t) * k2 * dim(6)
@@ -1166,7 +1139,7 @@ class ChanneledTimeIndexedPedData(Dataset):
         """
         mode:
             'slice' - 
-            'split' -**
+            'split' -
 
         """
         assert (data.num_frames > stride), "ValueError: stride < #total time steps"

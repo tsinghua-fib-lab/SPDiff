@@ -144,6 +144,6 @@ def plot_trajectory(p_pred, p_label, name):
                     plt.scatter(p_label[t, n, 0], p_label[t, n, 1], c='b', marker='x')
                 if t>0 and not np.isnan(p_label[t-1, n, 0]):
                     plt.plot(p_label[t-1:t+1, n, 0], p_label[t-1:t+1, n, 1], c='b', linestyle='--')
-    f = plt.gcf()  **
+    f = plt.gcf()  
     f.savefig('visualize_data/'+name+'.jpg')
-    f.clear()  **
+    f.clear()  

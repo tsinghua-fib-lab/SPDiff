@@ -20,7 +20,7 @@ class AutoEncoder(Module, DATA.Pedestrians):
         super().__init__()
         self.config = config
         self.encoder = encoder # 
-        self.diffnet = getattr(diffusion, config.diffnet) # diffusion decod****DiffusionTra**
+        self.diffnet = getattr(diffusion, config.diffnet) 
 
         self.diffusion = DiffusionTraj( 
             # net = self.diffnet(point_dim=2, context_dim=config.encoder_dim, tf_layer=config.tf_layer, residual=False),
@@ -33,7 +33,7 @@ class AutoEncoder(Module, DATA.Pedestrians):
             ),
             config=config
         )
-        if 'ucy' in config.finetune_dict_path:
+        if 'ucy' in config.data_dict_path:
             self.tau=5/6
         else:
             self.tau=2
@@ -113,18 +113,9 @@ class AutoEncoder(Module, DATA.Pedestrians):
 
         desired_speed = data.self_features[...,t_start,:,-1].unsqueeze(-1)  # *c, n, 1
 
-        if self.config.esti_goal=='acce':
-            history_features = data.self_hist_features[...,t_start, :, :, :]
-            history_features = clear_nan(history_features)
-        elif self.config.esti_goal=='pos': 
-            raise NotImplementedError
-            # hist_pos = data.self_hist_features[...,t_start, :, :, :2]
-            # hist_vel = torch.zeros_like(hist_pos, device=hist_pos.device)
-            # hist_acce = torch.zeros_like(hist_pos, device=hist_pos.device)
-            # hist_vel[:,1:,:] = data.self_hist_features[...,t_start, :, :-1, 2:4]
-            # hist_acce[:,2:,:] = data.self_hist_features[...,t_start, :, :-2, 4:6]
-            # history_features = torch.cat((hist_pos, hist_vel, hist_acce), dim=-1)
-            # history_features = clear_nan(history_features)
+        history_features = data.self_hist_features[...,t_start, :, :, :]
+        history_features = clear_nan(history_features)
+        
         ped_features = data.ped_features[..., t_start, :, :, :]
         obs_features = data.obs_features[..., t_start, :, :, :]
         self_feature = data.self_features[...,t_start, :, :]
@@ -153,7 +144,6 @@ class AutoEncoder(Module, DATA.Pedestrians):
         v_res[..., :t_start + 1, :, :] = data.velocity[..., :t_start + 1, :, :]
         a_res[..., :t_start + 1, :, :] = data.acceleration[..., :t_start + 1, :, :]
 
-        #**mask_p
         mask_p_new = torch.zeros(mask_p_.shape, device=mask_p_.device)
         mask_p_new[..., :t_start + 1, :] = data.mask_p[..., :t_start + 1, :].long()
 
@@ -268,7 +258,6 @@ class AutoEncoder(Module, DATA.Pedestrians):
 
             
 
-        # todo:**mask_v** mask_a;**mask_p
         output = DATA.RawData(p_res, v_res, a_res, destination, destination, obstacles,
                                 mask_p_new, meta_data=data.meta_data)
         return output, dest_force_res, ped_force_res
@@ -330,7 +319,6 @@ class AutoEncoder(Module, DATA.Pedestrians):
         v_res[..., :t_start + 1, :, :] = data.velocity[..., :t_start + 1, :, :]
         a_res[..., :t_start + 1, :, :] = data.acceleration[..., :t_start + 1, :, :]
 
-        #**mask_p
         mask_p_new = torch.zeros(mask_p_.shape, device=mask_p_.device)
         mask_p_new[..., :t_start + 1, :] = data.mask_p[..., :t_start + 1, :].long()
 
@@ -459,7 +447,6 @@ class AutoEncoder(Module, DATA.Pedestrians):
 
             
 
-        # todo:**mask_v** mask_a;**mask_p
         output = DATA.RawData(p_res, v_res, a_res, destination, destination, obstacles,
                                 mask_p_new, meta_data=data.meta_data)
         return output, dest_force_res, ped_force_res
@@ -485,48 +472,27 @@ class AutoEncoder(Module, DATA.Pedestrians):
         if self.config.train_mode == 'origin':
             obs_traj, pred_traj_gt, obs_traj_rel, pred_traj_gt_rel,\
             obs_vel, pred_vel_gt, obs_acc, pred_acc_gt, non_linear_ped,\
-            loss_mask,V_obs,A_obs,Nei_obs,V_tr,A_tr,Nei_tr = batch # x_t**************）；y_t**1******encode**latent variable
+            loss_mask,V_obs,A_obs,Nei_obs,V_tr,A_tr,Nei_tr = batch 
 
             # feat_x_encoded = self.encode(batch,node_type) # B * 64
             loss = self._teacher_loss(obs_traj,pred_traj_gt,pred_traj_gt_rel)
             
         elif self.config.train_mode == 'multi':
             ped_features,obs_features,self_features, labels, self_hist_features,\
-            mask_p_pred, mask_v_pred, mask_a_pred = batch #**mask**********）
-            if self.config.esti_goal == 'acce':
-                y_t = labels[1:,:,4:6]
-                # y_t = labels[:-1,:,4:6]
-                y_t = clear_nan(y_t)
-                curr = labels[:-1,:,:6] #****
+            mask_p_pred, mask_v_pred, mask_a_pred = batch
+            y_t = labels[1:,:,4:6]
+            # y_t = labels[:-1,:,4:6]
+            y_t = clear_nan(y_t)
+            curr = labels[:-1,:,:6] 
 
-                history = self_hist_features[:-1,:,:,:6] #bs, N, obs_len, 6
-                ped_features = ped_features[:-1] #bs, N, k_near, 6
-                obs_features = obs_features[:-1]
-                self_feature = self_features[:-1,:,:]
-                history = clear_nan(history)
-                mask = mask_a_pred[:-1]
-                loss = self.diffusion.get_loss(y_t, curr=curr,context=(history, ped_features, self_feature, obs_features),timestep=timestep,mask = mask)
-            elif self.config.esti_goal == 'pos':
-                raise NotImplementedError
-                y_t = labels[1:,:,:2] #**timestep—**
-                y_t = clear_nan(y_t)
-                hist_pos = self_hist_features[:-1, :, :, :2] #**timestep**label）
-                hist_vel = torch.zeros_like(hist_pos, device=hist_pos.device)
-                hist_acce = torch.zeros_like(hist_pos, device=hist_pos.device)
-                hist_vel[:,:,1:,:] = self_hist_features[:-1, :, :-1, 2:4]
-                hist_acce[:,:,2:,:] = self_hist_features[:-1, :, :-2, 4:6]
-                history = torch.cat((hist_pos, hist_vel, hist_acce), dim=-1)
-                # mask = contexts[:,-1,:,:]!=contexts[:,-1,:,:] #**mas**mask**** TODO
-                # mask = ~mask[...,0] # bs, N 
-                dest = self_features[:-1,:,:2]
-                mask = dest.abs().sum(dim=-1)==0
-                mask = ~mask
-                # mask = mask_v_pred[:-1]
-                history = clear_nan(history)
-                if self.config.history_dim==6:
-                    loss = self.diffusion.get_loss(y_t, curr=None, context = (history, dest), mask = mask)
-                elif self.config.history_dim==2:
-                    loss = self.diffusion.get_loss(y_t, curr=None, context = (history[..., :2], dest), mask = mask)
+            history = self_hist_features[:-1,:,:,:6] #bs, N, obs_len, 6
+            ped_features = ped_features[:-1] #bs, N, k_near, 6
+            obs_features = obs_features[:-1]
+            self_feature = self_features[:-1,:,:]
+            history = clear_nan(history)
+            mask = mask_a_pred[:-1]
+            loss = self.diffusion.get_loss(y_t, curr=curr,context=(history, ped_features, self_feature, obs_features),timestep=timestep,mask = mask)
+    
         else:
             raise NotImplementedError
         return loss
@@ -551,8 +517,7 @@ class AutoEncoder(Module, DATA.Pedestrians):
 
     def test_multiple_rollouts_for_training(self, data: DATA.TimeIndexedPedData, t_start=0):
         """
-       **，dynamic weighting;
-       **
+        dynamic weighting;
         Args:
             data:
             t_start:
@@ -612,7 +577,7 @@ class AutoEncoder(Module, DATA.Pedestrians):
                                                             ped_features.detach(), 
                                                             self_features.detach(),
                                                             obs_features.detach()), 
-                                                curr = curr.detach()).view(*a_cur.shape)  #chec**
+                                                curr = curr.detach()).view(*a_cur.shape)  
             # mask = mask_p_[:, t, :]  # c,n
 
             # if torch.sum(mask) > 0:
@@ -713,8 +678,6 @@ class AutoEncoder(Module, DATA.Pedestrians):
     
     def test_multiple_rollouts_for_training_geo(self, data: DATA.TimeIndexedPedData, t_start=0):
         """
-       **，dynamic weighting;
-       **
         Args:
             data:
             t_start:

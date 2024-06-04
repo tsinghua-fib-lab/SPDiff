@@ -108,7 +108,7 @@ def compute_batch_statistics(prediction_output_dict,
                 obs_viols = compute_obs_violations(prediction_dict[t][node], map)
             else:
                 obs_viols = 0
-            if best_of: #**
+            if best_of: 
                 ade_errors = np.min(ade_errors, keepdims=True)
                 fde_errors = np.min(fde_errors, keepdims=True)
                 kde_ll = np.min(kde_ll)
@@ -124,7 +124,7 @@ def compute_batch_statistics2(prediction_output,
                               best_of=True):
     ade_errors = compute_ade(prediction_output, gt)
     fde_errors = compute_fde(prediction_output, gt)
-    if best_of: #**
+    if best_of: 
         ade_errors = np.min(ade_errors, keepdims=True)
         fde_errors = np.min(fde_errors, keepdims=True)
     return ade_errors,fde_errors
