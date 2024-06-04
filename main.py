@@ -7,8 +7,6 @@ from easydict import EasyDict
 import numpy as np
 import random,torch
 import setproctitle
-# from environment.TrajectoryDS import TrajectoryDataset
-setproctitle.setproctitle('diffgeo@chenhongyi')
 torch.set_num_threads(8)
 
 def parse_args():

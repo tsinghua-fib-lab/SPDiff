@@ -15,11 +15,19 @@ The pdf can be found at https://arxiv.org/abs/2402.06680.
 - Python >= 3.7
 - Pytorch = 1.7.1
 
+To build the environment, run:
+```bash
+conda env create -f environment.yml
+```
+
 ## Dataset
 We conduct crowd simulation evaluation experiments of the model on two open-source datasets: the GC and the UCY datasets. Following the approach of PCS (Zhang et al. 2022), we select trajectory data with rich pedestrian interactions (> 200 pedestrians per minute) of 300s duration from the GC dataset and 216s duration from the UCY dataset for training and testing.
 The data is located in data_origin/GC_dataset and data_origin/UCY_dataset.
 
 ## Usage
+
+For the first time, you need to set the config param "**rebuild_dataset**" to True in the corresponding YAML configuration file (in dir **./config**) to preprocess the dataset. The processed data will be saved to the path indicated by the param "**data_dict_path**" in the YAML configuration file.
+
 
 To run the model on the GC dataset, use the following command:
 ```bash

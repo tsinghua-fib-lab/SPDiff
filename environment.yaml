@@ -1,4 +1,4 @@
-name: mid
+name: spdiff_env
 channels:
   - pytorch
   - defaults
@@ -22,6 +22,7 @@ dependencies:
   - mkl_random=1.1.1=py37h0573a6f_0
   - ncurses=6.2=he6710b0_1
   - ninja=1.10.2=py37hff7bd54_0
+  - numpy=1.19.2=py37h54aff64_0
   - numpy-base=1.19.2=py37hfa32c7d_0
   - openssl=1.1.1l=h7f8727e_0
   - pip=21.0.1=py37h06a4308_0
@@ -36,3 +37,21 @@ dependencies:
   - wheel=0.36.2=pyhd3eb1b0_0
   - xz=5.2.5=h7b6447c_0
   - zlib=1.2.11=h7b6447c_3
+  - pip:
+    - cycler==0.11.0
+    - dill==0.3.7
+    - easydict==1.13
+    - einops==0.6.1
+    - fonttools==4.38.0
+    - kiwisolver==1.4.5
+    - matplotlib==3.5.3
+    - packaging==24.0
+    - pillow==9.5.0
+    - protobuf==4.24.4
+    - pyparsing==3.1.2
+    - python-dateutil==2.9.0.post0
+    - pyyaml==6.0.1
+    - scipy==1.7.3
+    - setproctitle==1.3.3
+    - tensorboardx==2.6.2.2
+    - tqdm==4.66.4
